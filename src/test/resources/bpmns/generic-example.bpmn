@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1gqyjwq" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="generic-example" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_19udzef</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_04w50o8">
+      <bpmn:incoming>Flow_0mlctdm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_19udzef" sourceRef="StartEvent_1" targetRef="activity-logger" />
+    <bpmn:sequenceFlow id="Flow_0pewxxc" sourceRef="activity-logger" targetRef="Activity_1onmo51" />
+    <bpmn:serviceTask id="activity-logger" name="Logger Java Class" camunda:class="io.github.scafer.prices.crawler.examples.delegate.LoggerDelegate">
+      <bpmn:incoming>Flow_19udzef</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pewxxc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1m6dof0" sourceRef="Activity_1onmo51" targetRef="Activity_0r4mkjb" />
+    <bpmn:sequenceFlow id="Flow_0mlctdm" sourceRef="Activity_0r4mkjb" targetRef="Event_04w50o8" />
+    <bpmn:serviceTask id="Activity_1onmo51" name="Logger Java Bean" camunda:delegateExpression="${loggerDelegateBean}">
+      <bpmn:incoming>Flow_0pewxxc</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m6dof0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0r4mkjb" name="Logger Java Bean Service" camunda:delegateExpression="${serviceExampleDelegateBean}">
+      <bpmn:incoming>Flow_1m6dof0</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mlctdm</bpmn:outgoing>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="generic-example">
+      <bpmndi:BPMNEdge id="Flow_0mlctdm_di" bpmnElement="Flow_0mlctdm">
+        <di:waypoint x="630" y="117" />
+        <di:waypoint x="662" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m6dof0_di" bpmnElement="Flow_1m6dof0">
+        <di:waypoint x="490" y="117" />
+        <di:waypoint x="530" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pewxxc_di" bpmnElement="Flow_0pewxxc">
+        <di:waypoint x="350" y="117" />
+        <di:waypoint x="390" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_19udzef_di" bpmnElement="Flow_19udzef">
+        <di:waypoint x="215" y="117" />
+        <di:waypoint x="250" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04w50o8_di" bpmnElement="Event_04w50o8">
+        <dc:Bounds x="662" y="99" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_03eoxhg_di" bpmnElement="activity-logger">
+        <dc:Bounds x="250" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0oj4far_di" bpmnElement="Activity_1onmo51">
+        <dc:Bounds x="390" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yfetde_di" bpmnElement="Activity_0r4mkjb">
+        <dc:Bounds x="530" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
