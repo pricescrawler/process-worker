@@ -1,9 +1,11 @@
 HELP.md
+data/
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 *.db
+.env
 
 ### STS ###
 .apt_generated

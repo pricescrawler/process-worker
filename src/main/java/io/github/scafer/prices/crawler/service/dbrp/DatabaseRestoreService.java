@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.scafer.prices.crawler.content.domain.repository.dao.LocaleDao;
 import io.github.scafer.prices.crawler.content.domain.repository.dao.ProductDao;
 import io.github.scafer.prices.crawler.content.domain.repository.dao.ProductIncidentDao;
-import io.github.scafer.prices.crawler.content.domain.service.CatalogDataService;
-import io.github.scafer.prices.crawler.content.domain.service.ProductDataService;
-import io.github.scafer.prices.crawler.content.domain.service.ProductIncidentDataService;
+import io.github.scafer.prices.crawler.content.domain.service.data.CatalogDataService;
+import io.github.scafer.prices.crawler.content.domain.service.data.ProductDataService;
+import io.github.scafer.prices.crawler.content.domain.service.data.ProductIncidentDataService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

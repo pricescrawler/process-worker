@@ -15,7 +15,10 @@ public class RemoveDuplicatedSearchTermsDelegate implements JavaDelegate {
         var productData = delegateExecution.getVariable("productData");
         var productJson = new ObjectMapper().readValue(productData.toString(), ProductDao.class);
 
-        var searchTerms = productJson.getSearchTerms().stream().map(value -> value.trim().toLowerCase()).distinct().collect(Collectors.toList());
+        var searchTerms = productJson.getSearchTerms().stream().map(value -> value.trim().toLowerCase())
+                .distinct().collect(Collectors.toList());
+        searchTerms.removeIf(String::isBlank);
+
         productJson.setSearchTerms(searchTerms);
         delegateExecution.setVariable("productData", Spin.JSON(productJson));
     }

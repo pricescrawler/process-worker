@@ -10,8 +10,6 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.spin.Spin;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.stream.Collectors;
-
 @Log4j2
 public class FindProductsIncidentsDelegate implements JavaDelegate {
     @Autowired
@@ -20,7 +18,7 @@ public class FindProductsIncidentsDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws JsonProcessingException {
         var incidents = clearProductIncidentsService.findAllProductIncidents();
-        var incidentsIds = incidents.stream().map(ProductIncidentDao::getId).collect(Collectors.toList());
+        var incidentsIds = incidents.stream().map(ProductIncidentDao::getId).toList();
         var json = JsonUtils.convertObjectToString(incidents);
         delegateExecution.setVariable("incidents", Spin.JSON(json));
         delegateExecution.setVariable("incidentsIds", Spin.JSON(incidentsIds));

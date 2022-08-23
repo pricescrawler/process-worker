@@ -4,9 +4,10 @@ import io.github.scafer.prices.crawler.util.EmbeddedMongoDBServer;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.spring.boot.starter.test.helper.AbstractProcessEngineRuleTest;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +17,7 @@ import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertT
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class WorkflowTest extends AbstractProcessEngineRuleTest {
+class WorkflowTest extends AbstractProcessEngineRuleTest {
 
     private static EmbeddedMongoDBServer embeddedMongoDBServer;
 
@@ -33,23 +34,10 @@ public class WorkflowTest extends AbstractProcessEngineRuleTest {
         embeddedMongoDBServer.stop();
     }
 
-    @Test
-    public void shouldExecuteDelegateExample() {
+    @ParameterizedTest
+    @ValueSource(strings = {"delegate-example", "groovy-example", "generic-example"})
+    void shouldExecuteDelegate() {
         String processDefinitionKey = "delegate-example";
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processDefinitionKey);
-        assertThat(processInstance).isStarted().task();
-    }
-
-    @Test
-    public void shouldExecuteGroovyExample() {
-        String processDefinitionKey = "groovy-example";
-        ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processDefinitionKey);
-        assertThat(processInstance).isStarted().task();
-    }
-
-    @Test
-    public void shouldExecuteGenericExample() {
-        String processDefinitionKey = "generic-example";
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(processDefinitionKey);
         assertThat(processInstance).isStarted().task();
     }

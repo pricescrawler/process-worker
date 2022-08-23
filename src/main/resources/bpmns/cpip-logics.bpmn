@@ -110,9 +110,8 @@ logger.info("FormField_ApproveIncidentMerge: " + FormField_ApproveIncidentMerge.
             <camunda:validation />
           </camunda:formField>
         </camunda:formData>
-        <camunda:executionListener delegateExpression="${describeIncidentDelegate}" event="start" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1d93pqj</bpmn:incoming>
+      <bpmn:incoming>Flow_0ciuo3t</bpmn:incoming>
       <bpmn:outgoing>Flow_0gq4pxu</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:exclusiveGateway id="Gateway_approve-incident-merge" default="Flow_0hnchnv">
@@ -169,7 +168,7 @@ logger.info("FormField_ApproveIncidentMerge: " + FormField_ApproveIncidentMerge.
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0bndv9f" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1wj0uny" sourceRef="Event_1rwcqvh" targetRef="Activity_error-log" />
-    <bpmn:sequenceFlow id="Flow_1d93pqj" sourceRef="Activity_get-product-data" targetRef="Activity_approve-incident-merge" />
+    <bpmn:sequenceFlow id="Flow_1d93pqj" sourceRef="Activity_get-product-data" targetRef="Activity_1flhot7" />
     <bpmn:boundaryEvent id="Event_04v6k92" attachedToRef="Activity_get-product-data">
       <bpmn:outgoing>Flow_1jyr8lk</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1adohtp" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
@@ -185,7 +184,7 @@ logger.info("FormField_ApproveIncidentMerge: " + FormField_ApproveIncidentMerge.
           <camunda:script scriptFormat="groovy">logger.info("Start - DeleteIncident");</camunda:script>
         </camunda:executionListener>
         <camunda:executionListener event="end">
-          <camunda:script scriptFormat="groovy">logger.info("En- DeleteIncident");</camunda:script>
+          <camunda:script scriptFormat="groovy">logger.info("End - DeleteIncident");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1unuy33</bpmn:incoming>
@@ -215,6 +214,7 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_054e5ve</bpmn:incoming>
+      <bpmn:incoming>Flow_1bmu96s</bpmn:incoming>
       <bpmn:outgoing>Flow_0dkstav</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_check-if-incident-was-merged" name="Check if Incident was Merged" camunda:delegateExpression="${checkIfIncidentWasMergedDelegate}">
@@ -249,14 +249,38 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
       <bpmn:incoming>Flow_1u8w171</bpmn:incoming>
       <bpmn:outgoing>Flow_1dqea5s</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0p7up07" sourceRef="Activity_1flhot7" targetRef="Gateway_1lvz2oi" />
+    <bpmn:exclusiveGateway id="Gateway_1lvz2oi" default="Flow_0ciuo3t">
+      <bpmn:incoming>Flow_0p7up07</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bmu96s</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ciuo3t</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_1flhot7" name="Describe and Check Incident" camunda:delegateExpression="${describeIncidentDelegate}">
+      <bpmn:incoming>Flow_1d93pqj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p7up07</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1bmu96s" sourceRef="Gateway_1lvz2oi" targetRef="Activity_merge-incident">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approveIncidentMerge}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0ciuo3t" sourceRef="Gateway_1lvz2oi" targetRef="Activity_approve-incident-merge" />
   </bpmn:process>
   <bpmn:error id="Error_1wbqs71" name="Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="clear-products-incidents-process">
+      <bpmndi:BPMNEdge id="Flow_1bmu96s_di" bpmnElement="Flow_1bmu96s">
+        <di:waypoint x="1270" y="205" />
+        <di:waypoint x="1270" y="140" />
+        <di:waypoint x="1600" y="140" />
+        <di:waypoint x="1600" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p7up07_di" bpmnElement="Flow_0p7up07">
+        <di:waypoint x="1210" y="230" />
+        <di:waypoint x="1245" y="230" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jrvguy_di" bpmnElement="Flow_1jrvguy">
         <di:waypoint x="600" y="288" />
         <di:waypoint x="600" y="360" />
-        <di:waypoint x="1890" y="360" />
+        <di:waypoint x="2110" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1dqea5s_di" bpmnElement="Flow_1dqea5s">
         <di:waypoint x="700" y="230" />
@@ -269,19 +293,19 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <di:waypoint x="540" y="255" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1git835_di" bpmnElement="Flow_1git835">
-        <di:waypoint x="1850" y="255" />
-        <di:waypoint x="1850" y="310" />
+        <di:waypoint x="2070" y="255" />
+        <di:waypoint x="2070" y="310" />
         <di:waypoint x="540" y="310" />
         <di:waypoint x="540" y="255" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_10ekkve_di" bpmnElement="Flow_10ekkve">
-        <di:waypoint x="1790" y="230" />
-        <di:waypoint x="1825" y="230" />
+        <di:waypoint x="2010" y="230" />
+        <di:waypoint x="2045" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jyr8lk_di" bpmnElement="Flow_1jyr8lk">
         <di:waypoint x="970" y="288" />
         <di:waypoint x="970" y="360" />
-        <di:waypoint x="1890" y="360" />
+        <di:waypoint x="2110" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1d93pqj_di" bpmnElement="Flow_1d93pqj">
         <di:waypoint x="1070" y="230" />
@@ -290,13 +314,13 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
       <bpmndi:BPMNEdge id="Flow_1wj0uny_di" bpmnElement="Flow_1wj0uny">
         <di:waypoint x="740" y="288" />
         <di:waypoint x="740" y="360" />
-        <di:waypoint x="1890" y="360" />
+        <di:waypoint x="2110" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_08o5emf_di" bpmnElement="Flow_08o5emf">
         <di:waypoint x="910" y="205" />
         <di:waypoint x="910" y="140" />
-        <di:waypoint x="1520" y="140" />
-        <di:waypoint x="1520" y="190" />
+        <di:waypoint x="1740" y="140" />
+        <di:waypoint x="1740" y="190" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_044aric_di" bpmnElement="Flow_044aric">
         <di:waypoint x="840" y="230" />
@@ -307,66 +331,66 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <di:waypoint x="970" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0hnchnv_di" bpmnElement="Flow_0hnchnv">
-        <di:waypoint x="1270" y="255" />
-        <di:waypoint x="1270" y="310" />
+        <di:waypoint x="1490" y="255" />
+        <di:waypoint x="1490" y="310" />
         <di:waypoint x="540" y="310" />
         <di:waypoint x="540" y="255" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1f8mxs5_di" bpmnElement="Flow_1f8mxs5">
-        <di:waypoint x="1630" y="255" />
-        <di:waypoint x="1630" y="310" />
+        <di:waypoint x="1850" y="255" />
+        <di:waypoint x="1850" y="310" />
         <di:waypoint x="540" y="310" />
         <di:waypoint x="540" y="255" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1n3hq2h_di" bpmnElement="Flow_1n3hq2h">
-        <di:waypoint x="1690" y="288" />
-        <di:waypoint x="1690" y="360" />
-        <di:waypoint x="1890" y="360" />
+        <di:waypoint x="1910" y="288" />
+        <di:waypoint x="1910" y="360" />
+        <di:waypoint x="2110" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1url2qg_di" bpmnElement="Flow_1url2qg">
-        <di:waypoint x="1470" y="288" />
-        <di:waypoint x="1470" y="360" />
-        <di:waypoint x="1890" y="360" />
+        <di:waypoint x="1690" y="288" />
+        <di:waypoint x="1690" y="360" />
+        <di:waypoint x="2110" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0wxdlm9_di" bpmnElement="Flow_0wxdlm9">
-        <di:waypoint x="1330" y="288" />
-        <di:waypoint x="1330" y="360" />
-        <di:waypoint x="1890" y="360" />
+        <di:waypoint x="1550" y="288" />
+        <di:waypoint x="1550" y="360" />
+        <di:waypoint x="2110" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1bs3vuw_di" bpmnElement="Flow_1bs3vuw">
         <di:waypoint x="370" y="288" />
         <di:waypoint x="370" y="360" />
-        <di:waypoint x="1890" y="360" />
+        <di:waypoint x="2110" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_02hxfiz_di" bpmnElement="Flow_02hxfiz">
-        <di:waypoint x="1940" y="320" />
-        <di:waypoint x="1940" y="248" />
+        <di:waypoint x="2160" y="320" />
+        <di:waypoint x="2160" y="248" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1unuy33_di" bpmnElement="Flow_1unuy33">
-        <di:waypoint x="1655" y="230" />
-        <di:waypoint x="1690" y="230" />
+        <di:waypoint x="1875" y="230" />
+        <di:waypoint x="1910" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_01o5d6r_di" bpmnElement="Flow_01o5d6r">
-        <di:waypoint x="1570" y="230" />
-        <di:waypoint x="1605" y="230" />
+        <di:waypoint x="1790" y="230" />
+        <di:waypoint x="1825" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0dkstav_di" bpmnElement="Flow_0dkstav">
-        <di:waypoint x="1430" y="230" />
-        <di:waypoint x="1470" y="230" />
+        <di:waypoint x="1650" y="230" />
+        <di:waypoint x="1690" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_054e5ve_di" bpmnElement="Flow_054e5ve">
-        <di:waypoint x="1295" y="230" />
-        <di:waypoint x="1330" y="230" />
+        <di:waypoint x="1515" y="230" />
+        <di:waypoint x="1550" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0gq4pxu_di" bpmnElement="Flow_0gq4pxu">
-        <di:waypoint x="1210" y="230" />
-        <di:waypoint x="1245" y="230" />
+        <di:waypoint x="1430" y="230" />
+        <di:waypoint x="1465" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0js9zim_di" bpmnElement="Flow_0js9zim">
         <di:waypoint x="540" y="205" />
         <di:waypoint x="540" y="100" />
-        <di:waypoint x="1940" y="100" />
-        <di:waypoint x="1940" y="212" />
+        <di:waypoint x="2160" y="100" />
+        <di:waypoint x="2160" y="212" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1u8w171_di" bpmnElement="Flow_1u8w171">
         <di:waypoint x="565" y="230" />
@@ -384,6 +408,10 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <di:waypoint x="188" y="230" />
         <di:waypoint x="230" y="230" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ciuo3t_di" bpmnElement="Flow_0ciuo3t">
+        <di:waypoint x="1295" y="230" />
+        <di:waypoint x="1330" y="230" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent">
         <dc:Bounds x="152" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -394,13 +422,13 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <dc:Bounds x="230" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0cr57sv_di" bpmnElement="EndEvent">
-        <dc:Bounds x="1922" y="212" width="36" height="36" />
+        <dc:Bounds x="2142" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1892" y="223" width="20" height="14" />
+          <dc:Bounds x="2112" y="223" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1hfvrm8_di" bpmnElement="Activity_error-log">
-        <dc:Bounds x="1890" y="320" width="100" height="80" />
+        <dc:Bounds x="2110" y="320" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_11vo2z7_di" bpmnElement="Activity_find-products-incidents">
         <dc:Bounds x="370" y="190" width="100" height="80" />
@@ -410,13 +438,13 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <dc:Bounds x="515" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0hkmpn2_di" bpmnElement="Activity_approve-incident-merge">
-        <dc:Bounds x="1110" y="190" width="100" height="80" />
+        <dc:Bounds x="1330" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0ei6pba_di" bpmnElement="Gateway_approve-incident-merge" isMarkerVisible="true">
-        <dc:Bounds x="1245" y="205" width="50" height="50" />
+        <dc:Bounds x="1465" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1g7lf5c_di" bpmnElement="Gateway_check-if-incident-was-merged" isMarkerVisible="true">
-        <dc:Bounds x="1605" y="205" width="50" height="50" />
+        <dc:Bounds x="1825" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0gbeimg_di" bpmnElement="Gateway_is-merged-or-closed" isMarkerVisible="true">
         <dc:Bounds x="885" y="205" width="50" height="50" />
@@ -425,23 +453,30 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <dc:Bounds x="970" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_17hum8w_di" bpmnElement="Activity_delete-incident">
-        <dc:Bounds x="1690" y="190" width="100" height="80" />
+        <dc:Bounds x="1910" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ulxj65_di" bpmnElement="Activity_check-if-ismrgedor-closed">
         <dc:Bounds x="740" y="190" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_04e3o62_di" bpmnElement="Activity_merge-incident">
-        <dc:Bounds x="1330" y="190" width="100" height="80" />
+        <dc:Bounds x="1550" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1c3msqd_di" bpmnElement="Activity_check-if-incident-was-merged">
-        <dc:Bounds x="1470" y="190" width="100" height="80" />
+        <dc:Bounds x="1690" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1c9hjus_di" bpmnElement="Gateway_end-incidents-loop" isMarkerVisible="true">
-        <dc:Bounds x="1825" y="205" width="50" height="50" />
+        <dc:Bounds x="2045" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1ug02t7_di" bpmnElement="Activity_1a9rqkn">
         <dc:Bounds x="600" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1lvz2oi_di" bpmnElement="Gateway_1lvz2oi" isMarkerVisible="true">
+        <dc:Bounds x="1245" y="205" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1e51l63_di" bpmnElement="Activity_1flhot7">
+        <dc:Bounds x="1110" y="190" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1uzj3gc" bpmnElement="Event_0jjiz0b">
         <dc:Bounds x="582" y="252" width="36" height="36" />
@@ -453,13 +488,13 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <dc:Bounds x="722" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_00xb64h_di" bpmnElement="Event_00xb64h">
-        <dc:Bounds x="1672" y="252" width="36" height="36" />
+        <dc:Bounds x="1892" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_18staat_di" bpmnElement="Event_18staat">
-        <dc:Bounds x="1452" y="252" width="36" height="36" />
+        <dc:Bounds x="1672" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_05sj4g2_di" bpmnElement="Event_05sj4g2">
-        <dc:Bounds x="1312" y="252" width="36" height="36" />
+        <dc:Bounds x="1532" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_01z1495_di" bpmnElement="Event_01z1495">
         <dc:Bounds x="352" y="252" width="36" height="36" />

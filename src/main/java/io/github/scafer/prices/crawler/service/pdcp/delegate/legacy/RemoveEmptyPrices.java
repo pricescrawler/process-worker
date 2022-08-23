@@ -20,8 +20,18 @@ public class RemoveEmptyPrices implements JavaDelegate {
         pricesHistory.removeIf(price -> (price.getRegularPrice() == null || price.getRegularPrice().isEmpty()) && (price.getCampaignPrice() == null || price.getCampaignPrice().isEmpty()));
         pricesHistory.removeIf(price -> price.getRegularPrice() != null && price.getCampaignPrice() != null && price.getRegularPrice().equals(price.getCampaignPrice()));
 
-        if(quantity != pricesHistory.size()) {
+        if (quantity != pricesHistory.size()) {
             log.info("RemoveEmptyPrices - {}", productJson.getId());
+        }
+
+        if (!pricesHistory.isEmpty()) {
+            if (productJson.getCreated() == null || productJson.getCreated().isBlank()) {
+                productJson.setCreated(pricesHistory.get(0).getDate());
+            }
+
+            if (productJson.getUpdated() == null || productJson.getUpdated().isBlank()) {
+                productJson.setUpdated(pricesHistory.get(pricesHistory.size() - 1).getDate());
+            }
         }
 
         productJson.setPricesHistory(pricesHistory);
