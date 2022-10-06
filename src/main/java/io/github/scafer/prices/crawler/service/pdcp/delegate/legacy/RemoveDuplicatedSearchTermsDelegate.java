@@ -1,7 +1,7 @@
 package io.github.scafer.prices.crawler.service.pdcp.delegate.legacy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.scafer.prices.crawler.content.domain.repository.dao.ProductDao;
+import io.github.scafer.prices.crawler.content.common.dao.product.ProductDao;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.spin.Spin;

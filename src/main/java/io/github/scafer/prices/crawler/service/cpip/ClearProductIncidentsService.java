@@ -1,10 +1,10 @@
 package io.github.scafer.prices.crawler.service.cpip;
 
-import io.github.scafer.prices.crawler.content.domain.repository.ProductDataRepository;
-import io.github.scafer.prices.crawler.content.domain.repository.ProductIncidentDataRepository;
-import io.github.scafer.prices.crawler.content.domain.repository.dao.ProductDao;
-import io.github.scafer.prices.crawler.content.domain.repository.dao.ProductIncidentDao;
-import io.github.scafer.prices.crawler.content.domain.service.data.ProductIncidentDataService;
+import io.github.scafer.prices.crawler.content.common.dao.product.ProductDao;
+import io.github.scafer.prices.crawler.content.common.dao.product.incident.ProductIncidentDao;
+import io.github.scafer.prices.crawler.content.repository.product.ProductDataRepository;
+import io.github.scafer.prices.crawler.content.repository.product.incident.ProductIncidentDataRepository;
+import io.github.scafer.prices.crawler.content.repository.product.incident.ProductIncidentDataService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,8 +47,9 @@ public class ClearProductIncidentsService {
             var product = optionalProduct.get();
             var incident = optionalIncident.get();
 
-            for (var data : incident.getNewProducts()) {
-                var price = product.getPricesHistory().stream().filter(x -> x.getDate().equalsIgnoreCase(data.getDate())).findFirst();
+            for (var data : incident.getProducts()) {
+                var price = product.getPrices().stream().filter(value -> value.getDate().equals(data.getDate())).findFirst();
+
                 if (price.isEmpty()) {
                     return false;
                 }

@@ -20,7 +20,7 @@ public class DataSourceConfig {
             var dbUri = new URI(connectionString);
             var username = dbUri.getUserInfo().split(":")[0];
             var password = dbUri.getUserInfo().split(":")[1];
-            var dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ':' + dbUri.getPort() + dbUri.getPath();
+            var dbUrl = "jdbc:postgresql://" + dbUri.getHost() + ":" + dbUri.getPort() + dbUri.getPath();
             var driverClassName = "org.postgresql.Driver";
 
             var dataSourceBuilder = DataSourceBuilder.create();

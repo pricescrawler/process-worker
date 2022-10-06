@@ -1,7 +1,7 @@
 package io.github.scafer.prices.crawler.service.pdcp.delegate;
 
-import io.github.scafer.prices.crawler.content.domain.repository.ProductDataRepository;
-import io.github.scafer.prices.crawler.content.domain.repository.dao.ProductDao;
+import io.github.scafer.prices.crawler.content.common.dao.product.ProductDao;
+import io.github.scafer.prices.crawler.content.repository.product.ProductDataRepository;
 import lombok.extern.log4j.Log4j2;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;

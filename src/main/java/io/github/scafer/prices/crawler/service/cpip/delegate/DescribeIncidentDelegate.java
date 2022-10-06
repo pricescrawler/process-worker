@@ -2,7 +2,8 @@ package io.github.scafer.prices.crawler.service.cpip.delegate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.scafer.prices.crawler.config.ConstValues;
-import io.github.scafer.prices.crawler.content.domain.repository.ProductIncidentDataRepository;
+import io.github.scafer.prices.crawler.content.repository.product.incident.ProductIncidentDataRepository;
+import io.github.scafer.prices.crawler.utils.JsonUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.spin.Spin;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 
 public class DescribeIncidentDelegate implements JavaDelegate {
 
+    public static final String DIF = "%s | ";
     private final ObjectMapper mapper = new ObjectMapper();
     private final String[] properties = new String[]{"name", "brand", "quantity", "description", "productUrl", "eanUpcList"};
 
@@ -34,17 +36,23 @@ public class DescribeIncidentDelegate implements JavaDelegate {
         var activeIncidentJson = mapper.readTree(activeIncident.toString());
         var productJson = mapper.readTree(productData.toString());
 
-        var newProducts = activeIncidentJson.get("newProducts");
+        var products = activeIncidentJson.get("products");
         var incidentProperty = new ArrayList<String>();
 
-        for (var node : newProducts) {
+        for (var node : products) {
             for (var property : properties) {
-                if (!productJson.get(property).asText().equalsIgnoreCase(node.get(property).asText())) {
+                if (node.get(property).isTextual() && !productJson.get(property).asText().equalsIgnoreCase(node.get(property).asText())) {
                     numberOfConflicts++;
                     incidentProperty.add(property);
                     incidentFields.append(property).append(" | ");
-                    diffOld.append(String.format("%s | ", productJson.get(property).asText()));
-                    diffNew.append(String.format("%s | ", node.get(property).asText()));
+                    diffOld.append(String.format(DIF, productJson.get(property).asText()));
+                    diffNew.append(String.format(DIF, node.get(property).asText()));
+                } else if (node.get(property).isArray() && !productJson.get(property).asText().equalsIgnoreCase(node.get(property).asText(JsonUtils.convertObjectToString(node.get(property))))) {
+                    numberOfConflicts++;
+                    incidentProperty.add(property);
+                    incidentFields.append(property).append(" | ");
+                    diffOld.append(String.format(DIF, JsonUtils.convertObjectToString(productJson.get(property))));
+                    diffNew.append(String.format(DIF, JsonUtils.convertObjectToString(node.get(property))));
                 }
             }
         }
@@ -61,7 +69,7 @@ public class DescribeIncidentDelegate implements JavaDelegate {
             delegateExecution.setVariable("incidentFieldsDescribe", Spin.JSON(incidentFields));
             delegateExecution.setVariable("incidentShowDiffOldDescribe", Spin.JSON(diffOld));
             delegateExecution.setVariable("incidentShowDiffNewDescribe", Spin.JSON(diffNew));
-            delegateExecution.setVariable("incidentNumberOfPricesDescribe", newProducts.size());
+            delegateExecution.setVariable("incidentNumberOfPricesDescribe", products.size());
             delegateExecution.setVariable("totalNumberOfIncidents", incidentJson.size());
         }
     }

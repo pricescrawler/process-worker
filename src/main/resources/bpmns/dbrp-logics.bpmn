@@ -46,7 +46,7 @@ logger.error(message)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_06dyf1l" sourceRef="Event_0jqoykn" targetRef="Activity_error-log" />
     <bpmn:sequenceFlow id="Flow_1g0mykj" sourceRef="Event_04ne58w" targetRef="Activity_error-log" />
     <bpmn:sequenceFlow id="Flow_0dqmh7h" sourceRef="Event_0hbowdk" targetRef="Activity_error-log" />
-    <bpmn:serviceTask id="Activity_restore-locales-and-catalogues" name="Restore Locales and Catalogues" camunda:delegateExpression="${localeAndCatalogImporterDelegate}">
+    <bpmn:serviceTask id="Activity_restore-locales-and-catalogues" name="Restore Locales and Catalogues" camunda:delegateExpression="${localeAndCatalogAndCategoryImporterDelegate}">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="groovy">logger.info("Start - ImportLocalesAndCatalogues");</camunda:script>

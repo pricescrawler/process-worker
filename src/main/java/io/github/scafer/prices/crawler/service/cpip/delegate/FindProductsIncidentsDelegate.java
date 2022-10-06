@@ -1,7 +1,7 @@
 package io.github.scafer.prices.crawler.service.cpip.delegate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import io.github.scafer.prices.crawler.content.domain.repository.dao.ProductIncidentDao;
+import io.github.scafer.prices.crawler.content.common.dao.product.incident.ProductIncidentDao;
 import io.github.scafer.prices.crawler.service.cpip.ClearProductIncidentsService;
 import io.github.scafer.prices.crawler.utils.JsonUtils;
 import lombok.extern.log4j.Log4j2;
