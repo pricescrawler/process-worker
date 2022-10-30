@@ -1,11 +1,8 @@
 package io.github.scafer.prices.crawler;
 
-import io.github.scafer.prices.crawler.util.EmbeddedMongoDBServer;
 import org.camunda.bpm.engine.RuntimeService;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.spring.boot.starter.test.helper.AbstractProcessEngineRuleTest;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.runner.RunWith;
@@ -18,21 +15,8 @@ import static org.camunda.bpm.engine.test.assertions.bpmn.BpmnAwareTests.assertT
 @SpringBootTest
 @RunWith(SpringRunner.class)
 class WorkflowTest extends AbstractProcessEngineRuleTest {
-
-    private static EmbeddedMongoDBServer embeddedMongoDBServer;
-
     @Autowired
     public RuntimeService runtimeService;
-
-    @BeforeAll
-    static void setup() {
-        embeddedMongoDBServer = EmbeddedMongoDBServer.create().start();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        embeddedMongoDBServer.stop();
-    }
 
     @ParameterizedTest
     @ValueSource(strings = {"delegate-example", "groovy-example", "generic-example"})

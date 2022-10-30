@@ -1,12 +1,21 @@
 # Prices Crawler - Process Worker
 
-## 1. Description
+## 💻 Description
 
 The main goal of this project is to automate prices crawler tasks with camunda workflows.
 
 **Camunda URL:** http://localhost:8080
 
-## 2. Environment Variables
+## 📁 Requirements
+
+| #   | name    | Value   |
+|-----|---------|---------|
+| 1   | `Java`  | `17`    |
+| 2   | `Maven` | `3.8.6` |
+
+## 🕹️ Getting Started
+
+### Environment Variables
 
 | #   | Name                         | Type    | Description                   | Default    |
 |-----|------------------------------|---------|-------------------------------|------------|
@@ -16,4 +25,4 @@ The main goal of this project is to automate prices crawler tasks with camunda w
 | 4   | DATABASE_URL                 | String  | PostgreSQL server url         | -          |
 | 5   | SPRING_DATA_MONGODB_URI      | String  | MongoDB server url            | -          |
 | 6   | SPRING_DATA_MONGODB_DATABASE | String  | MongoDb database name         | -          |
-| 7   | IGNORE_URL_INCIDENT          | Boolean | CPIP variable                 | -          |
+| 7   | MERGE_URL_INCIDENT           | Boolean | CPIP variable                 | -          |

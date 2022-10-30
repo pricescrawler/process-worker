@@ -11,8 +11,8 @@ public class ExampleService {
         this.productDataRepository = productDataRepository;
     }
 
-    public String helloWorld(String str) {
-        return String.format("TestService.helloWorld: %s", str);
+    public String helloWorld(String value) {
+        return String.format("TestService.helloWorld: %s", value);
     }
 
     public int numberOfProducts() {
