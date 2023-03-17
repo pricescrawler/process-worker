@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_01ilogp" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
+  <bpmn:process id="product-update-process" name="Product Update Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1ods9jy</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1sxst3b">
+      <bpmn:incoming>Flow_13p1e8k</bpmn:incoming>
+      <bpmn:incoming>Flow_1iqjzqb</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1ods9jy" sourceRef="StartEvent_1" targetRef="Activity_set-common-variables" />
+    <bpmn:task id="Activity_set-common-variables" name="Set Common Variables">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="logger">
+            <camunda:script scriptFormat="groovy">import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+Logger logger = LoggerFactory.getLogger("Agent PDCP");
+
+logger</camunda:script>
+          </camunda:outputParameter>
+          <camunda:outputParameter name="numberOfRequests">0</camunda:outputParameter>
+          <camunda:outputParameter name="contentApiBaseUrl">
+            <camunda:script scriptFormat="groovy">String baseUrl = System.getenv("PRICES_CRAWLER_CONTENT_BASE_URL");
+String url = "${baseUrl}/api/v1/products/search";
+
+url</camunda:script>
+          </camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ods9jy</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qcy2nj</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:serviceTask id="Activity_0l5xp7s" name="Find Products" camunda:delegateExpression="${findProductsUrlDelegate}">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">logger.info("Start - FindProducts");</camunda:script>
+        </camunda:executionListener>
+        <camunda:executionListener event="end">
+          <camunda:script scriptFormat="groovy">logger.info("End - FindProducts");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0qcy2nj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z01bph</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0qcy2nj" sourceRef="Activity_set-common-variables" targetRef="Activity_0l5xp7s" />
+    <bpmn:sequenceFlow id="Flow_0z01bph" sourceRef="Activity_0l5xp7s" targetRef="Gateway_start-products-loop" />
+    <bpmn:exclusiveGateway id="Gateway_start-products-loop" default="Flow_13p1e8k">
+      <bpmn:extensionElements>
+        <camunda:executionListener class="delegate.pdcp.service.io.github.pricescrawler.ProductsLoopDelegate" event="start" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0z01bph</bpmn:incoming>
+      <bpmn:incoming>Flow_03hvfaf</bpmn:incoming>
+      <bpmn:outgoing>Flow_13p1e8k</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0ns891a</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_end-products-loop">
+      <bpmn:incoming>Flow_0gbmor0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h4o21h</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1h4o21h" sourceRef="Gateway_end-products-loop" targetRef="Event_timer" />
+    <bpmn:intermediateCatchEvent id="Event_timer">
+      <bpmn:extensionElements>
+        <camunda:executionListener event="start">
+          <camunda:script scriptFormat="groovy">logger.info("Timer - Waiting ${waitTimer}");</camunda:script>
+        </camunda:executionListener>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1h4o21h</bpmn:incoming>
+      <bpmn:outgoing>Flow_03hvfaf</bpmn:outgoing>
+      <bpmn:timerEventDefinition id="TimerEventDefinition_15mys2c">
+        <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${waitTimer}</bpmn:timeDuration>
+      </bpmn:timerEventDefinition>
+    </bpmn:intermediateCatchEvent>
+    <bpmn:sequenceFlow id="Flow_03hvfaf" sourceRef="Event_timer" targetRef="Gateway_start-products-loop" />
+    <bpmn:sequenceFlow id="Flow_13p1e8k" sourceRef="Gateway_start-products-loop" targetRef="Event_1sxst3b" />
+    <bpmn:scriptTask id="Activity_error-log" name="Error Log" scriptFormat="groovy">
+      <bpmn:incoming>Flow_1sq4cqv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1iqjzqb</bpmn:outgoing>
+      <bpmn:script>String message = ""
+if ((errorCode != null) &amp;&amp; !errorCode.isEmpty())
+{
+    message += "errorCode: " + errorCode + " "
+}
+
+if ((errorMessage != null) &amp;&amp; !errorMessage.isEmpty())
+{
+    message += "errorMessage: [" + errorMessage + "]"
+}
+
+logger.error(message)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_1iqjzqb" sourceRef="Activity_error-log" targetRef="Event_1sxst3b" />
+    <bpmn:boundaryEvent id="Event_01lyi3b" attachedToRef="Activity_0l5xp7s">
+      <bpmn:outgoing>Flow_1sq4cqv</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1ikfpqh" errorRef="Error_1pvun20" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1sq4cqv" sourceRef="Event_01lyi3b" targetRef="Activity_error-log" />
+    <bpmn:serviceTask id="Activity_1ujg0cv" name="Request ProductByUrl to Content-Base">
+      <bpmn:extensionElements>
+        <camunda:connector>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="method">GET</camunda:inputParameter>
+            <camunda:inputParameter name="url">${contentApiBaseUrl}${productId}</camunda:inputParameter>
+          </camunda:inputOutput>
+          <camunda:connectorId>http-connector</camunda:connectorId>
+        </camunda:connector>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ns891a</bpmn:incoming>
+      <bpmn:outgoing>Flow_0gbmor0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0gbmor0" sourceRef="Activity_1ujg0cv" targetRef="Gateway_end-products-loop" />
+    <bpmn:sequenceFlow id="Flow_0ns891a" sourceRef="Gateway_start-products-loop" targetRef="Activity_1ujg0cv">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${hasNextProduct}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmn:error id="Error_1pvun20" name="Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="product-update-process">
+      <bpmndi:BPMNEdge id="Flow_0ns891a_di" bpmnElement="Flow_0ns891a">
+        <di:waypoint x="595" y="170" />
+        <di:waypoint x="630" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gbmor0_di" bpmnElement="Flow_0gbmor0">
+        <di:waypoint x="730" y="170" />
+        <di:waypoint x="765" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1sq4cqv_di" bpmnElement="Flow_1sq4cqv">
+        <di:waypoint x="510" y="228" />
+        <di:waypoint x="510" y="320" />
+        <di:waypoint x="830" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1iqjzqb_di" bpmnElement="Flow_1iqjzqb">
+        <di:waypoint x="880" y="280" />
+        <di:waypoint x="880" y="188" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13p1e8k_di" bpmnElement="Flow_13p1e8k">
+        <di:waypoint x="570" y="145" />
+        <di:waypoint x="570" y="80" />
+        <di:waypoint x="880" y="80" />
+        <di:waypoint x="880" y="152" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03hvfaf_di" bpmnElement="Flow_03hvfaf">
+        <di:waypoint x="662" y="260" />
+        <di:waypoint x="570" y="260" />
+        <di:waypoint x="570" y="195" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h4o21h_di" bpmnElement="Flow_1h4o21h">
+        <di:waypoint x="790" y="195" />
+        <di:waypoint x="790" y="260" />
+        <di:waypoint x="698" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z01bph_di" bpmnElement="Flow_0z01bph">
+        <di:waypoint x="510" y="170" />
+        <di:waypoint x="545" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qcy2nj_di" bpmnElement="Flow_0qcy2nj">
+        <di:waypoint x="370" y="170" />
+        <di:waypoint x="410" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ods9jy_di" bpmnElement="Flow_1ods9jy">
+        <di:waypoint x="228" y="170" />
+        <di:waypoint x="270" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="192" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1sxst3b_di" bpmnElement="Event_1sxst3b">
+        <dc:Bounds x="862" y="152" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ve45sj_di" bpmnElement="Activity_set-common-variables">
+        <dc:Bounds x="270" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0libnl3" bpmnElement="Activity_0l5xp7s">
+        <dc:Bounds x="410" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1s9t648_di" bpmnElement="Gateway_start-products-loop" isMarkerVisible="true">
+        <dc:Bounds x="545" y="145" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="548" y="209" width="26" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0d8netm_di" bpmnElement="Gateway_end-products-loop" isMarkerVisible="true">
+        <dc:Bounds x="765" y="145" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fvnem1_di" bpmnElement="Event_timer">
+        <dc:Bounds x="662" y="242" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="936" y="295" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hfvrm8_di" bpmnElement="Activity_error-log">
+        <dc:Bounds x="830" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0y1sahy" bpmnElement="Activity_1ujg0cv">
+        <dc:Bounds x="630" y="130" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_11tggru" bpmnElement="Event_01lyi3b">
+        <dc:Bounds x="492" y="192" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

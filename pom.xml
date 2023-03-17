@@ -2,7 +2,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.github.scafer.prices.crawler</groupId>
+    <groupId>io.github.prices-crawler</groupId>
     <artifactId>prices-crawler-process-worker</artifactId>
     <version>0.0.1</version>
 
@@ -15,15 +15,14 @@
 
     <properties>
         <java.version>17</java.version>
-        <h2.version>2.1.212</h2.version>
         <spring.version>2.7.5</spring.version>
-        <groovy.version>3.0.13</groovy.version>
+        <groovy.version>3.0.14</groovy.version>
         <camunda.version>7.18.0</camunda.version>
-        <postgres.version>42.5.4</postgres.version>
-        <springdoc.version>1.6.14</springdoc.version>
-        <de.flapdoodle.embed.mongo>3.5.1</de.flapdoodle.embed.mongo>
+        <postgres.version>42.5.1</postgres.version>
+        <springdoc.version>1.6.13</springdoc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <prices-crawler-content.version>0.0.1</prices-crawler-content.version>
+        <de.flapdoodle.embed.mongo.version>3.5.3</de.flapdoodle.embed.mongo.version>
     </properties>
 
     <dependencyManagement>
@@ -86,6 +85,18 @@
 
         <!-- Process Worker dependencies -->
         <dependency>
+            <groupId>org.camunda.connect</groupId>
+            <artifactId>camunda-connect-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.bpm</groupId>
+            <artifactId>camunda-engine-plugin-connect</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.camunda.connect</groupId>
+            <artifactId>camunda-connect-http-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${groovy.version}</version>
@@ -109,17 +120,17 @@
 
         <!-- Prices Crawler dependencies -->
         <dependency>
-            <groupId>io.github.scafer.prices.crawler.content</groupId>
+            <groupId>io.github.prices-crawler.content</groupId>
             <artifactId>prices-crawler-content-common</artifactId>
             <version>${prices-crawler-content.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.scafer.prices.crawler.content</groupId>
+            <groupId>io.github.prices-crawler.content</groupId>
             <artifactId>prices-crawler-content-repository</artifactId>
             <version>${prices-crawler-content.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.scafer.prices.crawler.content</groupId>
+            <groupId>io.github.prices-crawler.content</groupId>
             <artifactId>prices-crawler-content-service</artifactId>
             <version>${prices-crawler-content.version}</version>
         </dependency>
@@ -133,7 +144,7 @@
         <dependency>
             <groupId>de.flapdoodle.embed</groupId>
             <artifactId>de.flapdoodle.embed.mongo</artifactId>
-            <version>${de.flapdoodle.embed.mongo}</version>
+            <version>${de.flapdoodle.embed.mongo.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

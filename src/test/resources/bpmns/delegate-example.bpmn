@@ -9,7 +9,7 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_19udzef" sourceRef="StartEvent_1" targetRef="activity-logger" />
     <bpmn:sequenceFlow id="Flow_0pewxxc" sourceRef="activity-logger" targetRef="Event_04w50o8" />
-    <bpmn:serviceTask id="activity-logger" name="Logger Delegate" camunda:class="io.github.scafer.prices.crawler.examples.delegate.LoggerDelegate">
+    <bpmn:serviceTask id="activity-logger" name="Logger Delegate" camunda:class="delegate.examples.io.github.pricescrawler.LoggerDelegate">
       <bpmn:incoming>Flow_19udzef</bpmn:incoming>
       <bpmn:outgoing>Flow_0pewxxc</bpmn:outgoing>
     </bpmn:serviceTask>

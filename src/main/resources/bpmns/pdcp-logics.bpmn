@@ -23,7 +23,7 @@ logger</camunda:script>
     </bpmn:task>
     <bpmn:exclusiveGateway id="Gateway_start-products-loop" default="Flow_0o2cxvr">
       <bpmn:extensionElements>
-        <camunda:executionListener class="io.github.scafer.prices.crawler.service.pdcp.delegate.ProductsLoopDelegate" event="start" />
+        <camunda:executionListener class="delegate.pdcp.service.io.github.pricescrawler.ProductsLoopDelegate" event="start" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1bmb1hq</bpmn:incoming>
       <bpmn:incoming>Flow_06zej6m</bpmn:incoming>
@@ -62,8 +62,8 @@ logger</camunda:script>
       <bpmn:incoming>Flow_0tg8z8u</bpmn:incoming>
       <bpmn:outgoing>Flow_0cglpqc</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_0cglpqc" sourceRef="Gateway_end-products-loop" targetRef="Event_08t0ce6" />
-    <bpmn:intermediateCatchEvent id="Event_08t0ce6">
+    <bpmn:sequenceFlow id="Flow_0cglpqc" sourceRef="Gateway_end-products-loop" targetRef="Event_timer" />
+    <bpmn:intermediateCatchEvent id="Event_timer">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="groovy">logger.info("Timer - Waiting ${waitTimer}");</camunda:script>
@@ -75,8 +75,8 @@ logger</camunda:script>
         <bpmn:timeDuration xsi:type="bpmn:tFormalExpression">${waitTimer}</bpmn:timeDuration>
       </bpmn:timerEventDefinition>
     </bpmn:intermediateCatchEvent>
-    <bpmn:sequenceFlow id="Flow_06zej6m" sourceRef="Event_08t0ce6" targetRef="Gateway_start-products-loop" />
-    <bpmn:sequenceFlow id="Flow_1d3lc0q" sourceRef="Activity_get-product-data" targetRef="Activity_remove-duplicated-searchTerms" />
+    <bpmn:sequenceFlow id="Flow_06zej6m" sourceRef="Event_timer" targetRef="Gateway_start-products-loop" />
+    <bpmn:sequenceFlow id="Flow_1d3lc0q" sourceRef="Activity_get-product-data" targetRef="Activity_remove-duplicate-search-terms" />
     <bpmn:serviceTask id="Activity_get-product-data" name="Get Product Data" camunda:delegateExpression="${findProductByIdDelegate}">
       <bpmn:incoming>Flow_0gg7qh3</bpmn:incoming>
       <bpmn:outgoing>Flow_1d3lc0q</bpmn:outgoing>
@@ -85,8 +85,8 @@ logger</camunda:script>
       <bpmn:incoming>Flow_1nui5cl</bpmn:incoming>
       <bpmn:incoming>Flow_1jrf6yl</bpmn:incoming>
       <bpmn:incoming>Flow_06t1i10</bpmn:incoming>
-      <bpmn:incoming>Flow_1wm3e9z</bpmn:incoming>
-      <bpmn:incoming>Flow_19jqun8</bpmn:incoming>
+      <bpmn:incoming>Flow_1o9dj4r</bpmn:incoming>
+      <bpmn:incoming>Flow_0an0vgh</bpmn:incoming>
       <bpmn:outgoing>Flow_0wsgepy</bpmn:outgoing>
       <bpmn:script>String message = ""
 if ((errorCode != null) &amp;&amp; !errorCode.isEmpty())
@@ -113,39 +113,66 @@ logger.error(message)</bpmn:script>
     <bpmn:sequenceFlow id="Flow_1jrf6yl" sourceRef="Event_1rwcqvh" targetRef="Activity_error-log" />
     <bpmn:sequenceFlow id="Flow_0wsgepy" sourceRef="Activity_error-log" targetRef="EndEvent" />
     <bpmn:sequenceFlow id="Flow_0tg8z8u" sourceRef="Activity_save-product-data" targetRef="Gateway_end-products-loop" />
-    <bpmn:sequenceFlow id="Flow_0j3dfhx" sourceRef="Activity_remove-duplicated-searchTerms" targetRef="Activity_remove-empty-prices" />
-    <bpmn:boundaryEvent id="Event_17hxqf5" attachedToRef="Activity_remove-duplicated-searchTerms">
-      <bpmn:outgoing>Flow_1wm3e9z</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_1ttmtxg" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
-    </bpmn:boundaryEvent>
     <bpmn:boundaryEvent id="Event_0ugif20" attachedToRef="Activity_save-product-data">
       <bpmn:outgoing>Flow_06t1i10</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0xoon2c" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_06t1i10" sourceRef="Event_0ugif20" targetRef="Activity_error-log" />
-    <bpmn:sequenceFlow id="Flow_1wm3e9z" sourceRef="Event_17hxqf5" targetRef="Activity_error-log" />
     <bpmn:serviceTask id="Activity_save-product-data" name="Save Product Data" camunda:delegateExpression="${saveProductDelegate}">
-      <bpmn:incoming>Flow_0pzw1pd</bpmn:incoming>
+      <bpmn:incoming>Flow_0vq9aoi</bpmn:incoming>
       <bpmn:outgoing>Flow_0tg8z8u</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_remove-duplicated-searchTerms" name="Remove duplicated searchTerms" camunda:delegateExpression="${removeDuplicatedSearchTermsDelegate}">
-      <bpmn:incoming>Flow_1d3lc0q</bpmn:incoming>
-      <bpmn:outgoing>Flow_0j3dfhx</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0pzw1pd" sourceRef="Activity_remove-empty-prices" targetRef="Activity_save-product-data" />
-    <bpmn:boundaryEvent id="Event_0uv8p0y" attachedToRef="Activity_remove-empty-prices">
-      <bpmn:outgoing>Flow_19jqun8</bpmn:outgoing>
-      <bpmn:errorEventDefinition id="ErrorEventDefinition_03omce6" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    <bpmn:sequenceFlow id="Flow_0p9and5" sourceRef="Activity_remove-duplicate-search-terms" targetRef="Activity_remove-empty-prices" />
+    <bpmn:boundaryEvent id="Event_0zjiefe" attachedToRef="Activity_remove-duplicate-search-terms">
+      <bpmn:outgoing>Flow_1o9dj4r</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_05xjexz" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_19jqun8" sourceRef="Event_0uv8p0y" targetRef="Activity_error-log" />
-    <bpmn:serviceTask id="Activity_remove-empty-prices" name="Remove Empty Prices" camunda:delegateExpression="${removeEmptyPrices}">
-      <bpmn:incoming>Flow_0j3dfhx</bpmn:incoming>
-      <bpmn:outgoing>Flow_0pzw1pd</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_1o9dj4r" sourceRef="Event_0zjiefe" targetRef="Activity_error-log" />
+    <bpmn:serviceTask id="Activity_remove-duplicate-search-terms" name="Remove Duplicate Search Terms" camunda:delegateExpression="${removeDuplicatedSearchTermsDelegate}">
+      <bpmn:incoming>Flow_1d3lc0q</bpmn:incoming>
+      <bpmn:outgoing>Flow_0p9and5</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0vq9aoi" sourceRef="Activity_remove-empty-prices" targetRef="Activity_save-product-data" />
+    <bpmn:serviceTask id="Activity_remove-empty-prices" name="Remove Empty Prices" camunda:delegateExpression="${removeEmptyPricesDelegate}">
+      <bpmn:incoming>Flow_0p9and5</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vq9aoi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_1ko38sb" attachedToRef="Activity_remove-empty-prices">
+      <bpmn:outgoing>Flow_0an0vgh</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_188swfp" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0an0vgh" sourceRef="Event_1ko38sb" targetRef="Activity_error-log" />
   </bpmn:process>
   <bpmn:error id="Error_1wbqs71" name="Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="product-data-consistency-process">
+      <bpmndi:BPMNEdge id="Flow_0an0vgh_di" bpmnElement="Flow_0an0vgh">
+        <di:waypoint x="1000" y="235" />
+        <di:waypoint x="1000" y="330" />
+        <di:waypoint x="1240" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vq9aoi_di" bpmnElement="Flow_0vq9aoi">
+        <di:waypoint x="1000" y="177" />
+        <di:waypoint x="1050" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1o9dj4r_di" bpmnElement="Flow_1o9dj4r">
+        <di:waypoint x="860" y="235" />
+        <di:waypoint x="860" y="330" />
+        <di:waypoint x="1240" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p9and5_di" bpmnElement="Flow_0p9and5">
+        <di:waypoint x="860" y="177" />
+        <di:waypoint x="900" y="177" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06t1i10_di" bpmnElement="Flow_06t1i10">
+        <di:waypoint x="1150" y="235" />
+        <di:waypoint x="1150" y="330" />
+        <di:waypoint x="1240" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0tg8z8u_di" bpmnElement="Flow_0tg8z8u">
+        <di:waypoint x="1150" y="177" />
+        <di:waypoint x="1195" y="177" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1jrf6yl_di" bpmnElement="Flow_1jrf6yl">
         <di:waypoint x="500" y="235" />
         <di:waypoint x="500" y="330" />
@@ -161,9 +188,14 @@ logger.error(message)</bpmn:script>
         <di:waypoint x="760" y="177" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06zej6m_di" bpmnElement="Flow_06zej6m">
-        <di:waypoint x="912" y="270" />
+        <di:waypoint x="932" y="270" />
         <di:waypoint x="560" y="270" />
         <di:waypoint x="560" y="202" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0cglpqc_di" bpmnElement="Flow_0cglpqc">
+        <di:waypoint x="1220" y="202" />
+        <di:waypoint x="1220" y="270" />
+        <di:waypoint x="968" y="270" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0gg7qh3_di" bpmnElement="Flow_0gg7qh3">
         <di:waypoint x="585" y="177" />
@@ -191,38 +223,6 @@ logger.error(message)</bpmn:script>
         <di:waypoint x="1290" y="290" />
         <di:waypoint x="1290" y="195" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0tg8z8u_di" bpmnElement="Flow_0tg8z8u">
-        <di:waypoint x="1140" y="177" />
-        <di:waypoint x="1185" y="177" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0cglpqc_di" bpmnElement="Flow_0cglpqc">
-        <di:waypoint x="1210" y="202" />
-        <di:waypoint x="1210" y="270" />
-        <di:waypoint x="948" y="270" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06t1i10_di" bpmnElement="Flow_06t1i10">
-        <di:waypoint x="1140" y="235" />
-        <di:waypoint x="1140" y="330" />
-        <di:waypoint x="1240" y="330" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wm3e9z_di" bpmnElement="Flow_1wm3e9z">
-        <di:waypoint x="860" y="235" />
-        <di:waypoint x="860" y="330" />
-        <di:waypoint x="1240" y="330" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_19jqun8_di" bpmnElement="Flow_19jqun8">
-        <di:waypoint x="1000" y="235" />
-        <di:waypoint x="1000" y="330" />
-        <di:waypoint x="1240" y="330" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0pzw1pd_di" bpmnElement="Flow_0pzw1pd">
-        <di:waypoint x="1000" y="177" />
-        <di:waypoint x="1040" y="177" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0j3dfhx_di" bpmnElement="Flow_0j3dfhx">
-        <di:waypoint x="860" y="177" />
-        <di:waypoint x="900" y="177" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent">
         <dc:Bounds x="179" y="159" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -241,8 +241,28 @@ logger.error(message)</bpmn:script>
       <bpmndi:BPMNShape id="Activity_1f1tce4_di" bpmnElement="Activity_find-products">
         <dc:Bounds x="400" y="137" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0fvnem1_di" bpmnElement="Event_timer">
+        <dc:Bounds x="932" y="252" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="936" y="295" width="29" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0kuye6g_di" bpmnElement="Activity_get-product-data">
         <dc:Bounds x="620" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hcoc5r_di" bpmnElement="Activity_remove-duplicate-search-terms">
+        <dc:Bounds x="760" y="137" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vzxo3z_di" bpmnElement="Activity_remove-empty-prices">
+        <dc:Bounds x="900" y="137" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_06o2nrg_di" bpmnElement="Activity_save-product-data">
+        <dc:Bounds x="1050" y="137" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0d8netm_di" bpmnElement="Gateway_end-products-loop" isMarkerVisible="true">
+        <dc:Bounds x="1195" y="152" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0uz03vp_di" bpmnElement="EndEvent">
         <dc:Bounds x="1272" y="159" width="36" height="36" />
@@ -250,23 +270,14 @@ logger.error(message)</bpmn:script>
           <dc:Bounds x="1320" y="170" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0d8netm_di" bpmnElement="Gateway_end-products-loop" isMarkerVisible="true">
-        <dc:Bounds x="1185" y="152" width="50" height="50" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1hfvrm8_di" bpmnElement="Activity_error-log">
         <dc:Bounds x="1240" y="290" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_06o2nrg_di" bpmnElement="Activity_save-product-data">
-        <dc:Bounds x="1040" y="137" width="100" height="80" />
+      <bpmndi:BPMNShape id="BPMNShape_1je5fpc" bpmnElement="Event_1ko38sb">
+        <dc:Bounds x="982" y="199" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_18o47ni_di" bpmnElement="Activity_remove-duplicated-searchTerms">
-        <dc:Bounds x="760" y="137" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1g2cmfr_di" bpmnElement="Activity_remove-empty-prices">
-        <dc:Bounds x="900" y="137" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0fvnem1_di" bpmnElement="Event_08t0ce6">
-        <dc:Bounds x="912" y="252" width="36" height="36" />
+      <bpmndi:BPMNShape id="BPMNShape_0l517gd" bpmnElement="Event_0zjiefe">
+        <dc:Bounds x="842" y="199" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_0xnosyv" bpmnElement="Event_0s54dpj">
         <dc:Bounds x="702" y="199" width="36" height="36" />
@@ -274,14 +285,8 @@ logger.error(message)</bpmn:script>
       <bpmndi:BPMNShape id="Event_1rwcqvh_di" bpmnElement="Event_1rwcqvh">
         <dc:Bounds x="482" y="199" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1y8b8bw" bpmnElement="Event_0uv8p0y">
-        <dc:Bounds x="982" y="199" width="36" height="36" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_09alpxp" bpmnElement="Event_0ugif20">
-        <dc:Bounds x="1122" y="199" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_16y1jgm" bpmnElement="Event_17hxqf5">
-        <dc:Bounds x="842" y="199" width="36" height="36" />
+        <dc:Bounds x="1132" y="199" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
