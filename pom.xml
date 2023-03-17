@@ -22,7 +22,7 @@
         <springdoc.version>1.6.13</springdoc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <prices-crawler-content.version>0.0.1</prices-crawler-content.version>
-        <de.flapdoodle.embed.mongo.version>3.5.3</de.flapdoodle.embed.mongo.version>
+        <de.flapdoodle.embed.mongo.version>4.6.1</de.flapdoodle.embed.mongo.version>
     </properties>
 
     <dependencyManagement>
