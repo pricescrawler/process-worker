@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_19jbn40" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.17.0">
   <bpmn:process id="database-restore-process" name="Database Restore Process" isExecutable="true" camunda:versionTag="1.0.0">
-    <bpmn:endEvent id="EndEvent" name="End">
-      <bpmn:incoming>Flow_1e8266c</bpmn:incoming>
-      <bpmn:incoming>Flow_13kmkxl</bpmn:incoming>
+    <bpmn:endEvent id="Event_End" name="End">
+      <bpmn:incoming>Flow_05</bpmn:incoming>
+      <bpmn:incoming>Flow_09</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:startEvent id="StartEvent" name="Start">
-      <bpmn:outgoing>Flow_0qztlh4</bpmn:outgoing>
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_01</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:scriptTask id="Activity_error-log" name="Error Log" scriptFormat="groovy">
-      <bpmn:incoming>Flow_06dyf1l</bpmn:incoming>
-      <bpmn:incoming>Flow_1g0mykj</bpmn:incoming>
-      <bpmn:incoming>Flow_0dqmh7h</bpmn:incoming>
-      <bpmn:outgoing>Flow_13kmkxl</bpmn:outgoing>
+      <bpmn:incoming>Flow_06</bpmn:incoming>
+      <bpmn:incoming>Flow_07</bpmn:incoming>
+      <bpmn:incoming>Flow_08</bpmn:incoming>
+      <bpmn:outgoing>Flow_09</bpmn:outgoing>
       <bpmn:script>String message = ""
 if ((errorCode != null) &amp;&amp; !errorCode.isEmpty())
 {
@@ -26,26 +26,26 @@ if ((errorMessage != null) &amp;&amp; !errorMessage.isEmpty())
 
 logger.error(message)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_0qztlh4" sourceRef="StartEvent" targetRef="Activity_set-common-variables" />
-    <bpmn:sequenceFlow id="Flow_0lxgxe5" sourceRef="Activity_restore-locales-and-catalogues" targetRef="Activity_restore-products" />
-    <bpmn:sequenceFlow id="Flow_17npqda" sourceRef="Activity_restore-products" targetRef="Activity_restore-products-incidents" />
-    <bpmn:sequenceFlow id="Flow_1e8266c" sourceRef="Activity_restore-products-incidents" targetRef="EndEvent" />
-    <bpmn:sequenceFlow id="Flow_13kmkxl" sourceRef="Activity_error-log" targetRef="EndEvent" />
-    <bpmn:boundaryEvent id="Event_0jqoykn" attachedToRef="Activity_restore-locales-and-catalogues">
-      <bpmn:outgoing>Flow_06dyf1l</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_01" sourceRef="Event_Start" targetRef="Activity_set-common-variables" />
+    <bpmn:sequenceFlow id="Flow_03" sourceRef="Activity_restore-locales-and-catalogues" targetRef="Activity_restore-products" />
+    <bpmn:sequenceFlow id="Flow_04" sourceRef="Activity_restore-products" targetRef="Activity_restore-products-incidents" />
+    <bpmn:sequenceFlow id="Flow_05" sourceRef="Activity_restore-products-incidents" targetRef="Event_End" />
+    <bpmn:sequenceFlow id="Flow_09" sourceRef="Activity_error-log" targetRef="Event_End" />
+    <bpmn:boundaryEvent id="Event_exception-01" attachedToRef="Activity_restore-locales-and-catalogues">
+      <bpmn:outgoing>Flow_06</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1lg9iv8" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="Event_04ne58w" attachedToRef="Activity_restore-products">
-      <bpmn:outgoing>Flow_1g0mykj</bpmn:outgoing>
+    <bpmn:boundaryEvent id="Event_exception-02" attachedToRef="Activity_restore-products">
+      <bpmn:outgoing>Flow_07</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_06lp7tl" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="Event_0hbowdk" attachedToRef="Activity_restore-products-incidents">
-      <bpmn:outgoing>Flow_0dqmh7h</bpmn:outgoing>
+    <bpmn:boundaryEvent id="Event_exception-03" attachedToRef="Activity_restore-products-incidents">
+      <bpmn:outgoing>Flow_08</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0ga5zv7" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_06dyf1l" sourceRef="Event_0jqoykn" targetRef="Activity_error-log" />
-    <bpmn:sequenceFlow id="Flow_1g0mykj" sourceRef="Event_04ne58w" targetRef="Activity_error-log" />
-    <bpmn:sequenceFlow id="Flow_0dqmh7h" sourceRef="Event_0hbowdk" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_06" sourceRef="Event_exception-01" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_07" sourceRef="Event_exception-02" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_08" sourceRef="Event_exception-03" targetRef="Activity_error-log" />
     <bpmn:serviceTask id="Activity_restore-locales-and-catalogues" name="Restore Locales and Catalogues" camunda:delegateExpression="${localeAndCatalogAndCategoryImporterDelegate}">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
@@ -55,8 +55,8 @@ logger.error(message)</bpmn:script>
           <camunda:script scriptFormat="groovy">logger.info("End - ImportLocalesAndCatalogues");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_07tdt6w</bpmn:incoming>
-      <bpmn:outgoing>Flow_0lxgxe5</bpmn:outgoing>
+      <bpmn:incoming>Flow_02</bpmn:incoming>
+      <bpmn:outgoing>Flow_03</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_restore-products" name="Restore Products" camunda:delegateExpression="${productImporterDelegate}">
       <bpmn:extensionElements>
@@ -67,8 +67,8 @@ logger.error(message)</bpmn:script>
           <camunda:script scriptFormat="groovy">logger.info("Start - ImportProducts");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0lxgxe5</bpmn:incoming>
-      <bpmn:outgoing>Flow_17npqda</bpmn:outgoing>
+      <bpmn:incoming>Flow_03</bpmn:incoming>
+      <bpmn:outgoing>Flow_04</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_restore-products-incidents" name="Restore Products Incidents" camunda:delegateExpression="${productIncidentImporterDelegate}">
       <bpmn:extensionElements>
@@ -79,8 +79,8 @@ logger.error(message)</bpmn:script>
           <camunda:script scriptFormat="groovy">logger.info("Start - ImportProductsIncidents");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_17npqda</bpmn:incoming>
-      <bpmn:outgoing>Flow_1e8266c</bpmn:outgoing>
+      <bpmn:incoming>Flow_04</bpmn:incoming>
+      <bpmn:outgoing>Flow_05</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:task id="Activity_set-common-variables" name="Set Common Variables">
       <bpmn:extensionElements>
@@ -95,60 +95,60 @@ logger</camunda:script>
           </camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0qztlh4</bpmn:incoming>
-      <bpmn:outgoing>Flow_07tdt6w</bpmn:outgoing>
+      <bpmn:incoming>Flow_01</bpmn:incoming>
+      <bpmn:outgoing>Flow_02</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_07tdt6w" sourceRef="Activity_set-common-variables" targetRef="Activity_restore-locales-and-catalogues" />
+    <bpmn:sequenceFlow id="Flow_02" sourceRef="Activity_set-common-variables" targetRef="Activity_restore-locales-and-catalogues" />
   </bpmn:process>
   <bpmn:error id="Error_1wbqs71" name="Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="database-restore-process">
-      <bpmndi:BPMNEdge id="Flow_07tdt6w_di" bpmnElement="Flow_07tdt6w">
+      <bpmndi:BPMNEdge id="Flow_07tdt6w_di" bpmnElement="Flow_02">
         <di:waypoint x="310" y="117" />
         <di:waypoint x="350" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0dqmh7h_di" bpmnElement="Flow_0dqmh7h">
+      <bpmndi:BPMNEdge id="Flow_0dqmh7h_di" bpmnElement="Flow_08">
         <di:waypoint x="630" y="175" />
         <di:waypoint x="630" y="240" />
         <di:waypoint x="740" y="240" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1g0mykj_di" bpmnElement="Flow_1g0mykj">
+      <bpmndi:BPMNEdge id="Flow_1g0mykj_di" bpmnElement="Flow_07">
         <di:waypoint x="490" y="175" />
         <di:waypoint x="490" y="240" />
         <di:waypoint x="740" y="240" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_06dyf1l_di" bpmnElement="Flow_06dyf1l">
+      <bpmndi:BPMNEdge id="Flow_06dyf1l_di" bpmnElement="Flow_06">
         <di:waypoint x="350" y="175" />
         <di:waypoint x="350" y="240" />
         <di:waypoint x="740" y="240" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_13kmkxl_di" bpmnElement="Flow_13kmkxl">
+      <bpmndi:BPMNEdge id="Flow_13kmkxl_di" bpmnElement="Flow_09">
         <di:waypoint x="790" y="200" />
         <di:waypoint x="790" y="135" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1e8266c_di" bpmnElement="Flow_1e8266c">
+      <bpmndi:BPMNEdge id="Flow_1e8266c_di" bpmnElement="Flow_05">
         <di:waypoint x="730" y="117" />
         <di:waypoint x="772" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_17npqda_di" bpmnElement="Flow_17npqda">
+      <bpmndi:BPMNEdge id="Flow_17npqda_di" bpmnElement="Flow_04">
         <di:waypoint x="590" y="117" />
         <di:waypoint x="630" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0lxgxe5_di" bpmnElement="Flow_0lxgxe5">
+      <bpmndi:BPMNEdge id="Flow_0lxgxe5_di" bpmnElement="Flow_03">
         <di:waypoint x="450" y="117" />
         <di:waypoint x="490" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0qztlh4_di" bpmnElement="Flow_0qztlh4">
+      <bpmndi:BPMNEdge id="Flow_0qztlh4_di" bpmnElement="Flow_01">
         <di:waypoint x="168" y="117" />
         <di:waypoint x="210" y="117" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Event_1xrqbqm_di" bpmnElement="EndEvent">
+      <bpmndi:BPMNShape id="Event_1xrqbqm_di" bpmnElement="Event_End">
         <dc:Bounds x="772" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="820" y="110" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1tlk0h2_di" bpmnElement="StartEvent">
+      <bpmndi:BPMNShape id="Event_1tlk0h2_di" bpmnElement="Event_Start">
         <dc:Bounds x="132" y="99" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="138" y="142" width="25" height="14" />
@@ -172,13 +172,13 @@ logger</camunda:script>
       <bpmndi:BPMNShape id="Activity_1ve45sj_di" bpmnElement="Activity_set-common-variables">
         <dc:Bounds x="210" y="77" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_11cmfqc" bpmnElement="Event_0hbowdk">
+      <bpmndi:BPMNShape id="BPMNShape_11cmfqc" bpmnElement="Event_exception-03">
         <dc:Bounds x="612" y="139" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_08kca3h" bpmnElement="Event_04ne58w">
+      <bpmndi:BPMNShape id="BPMNShape_08kca3h" bpmnElement="Event_exception-02">
         <dc:Bounds x="472" y="139" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0jqoykn_di" bpmnElement="Event_0jqoykn">
+      <bpmndi:BPMNShape id="Event_0jqoykn_di" bpmnElement="Event_exception-01">
         <dc:Bounds x="332" y="139" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>

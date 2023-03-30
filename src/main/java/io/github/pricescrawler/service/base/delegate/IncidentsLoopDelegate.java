@@ -1,4 +1,4 @@
-package io.github.pricescrawler.service.cpip.delegate;
+package io.github.pricescrawler.service.base.delegate;
 
 import lombok.extern.log4j.Log4j2;
 import org.camunda.bpm.engine.delegate.DelegateExecution;

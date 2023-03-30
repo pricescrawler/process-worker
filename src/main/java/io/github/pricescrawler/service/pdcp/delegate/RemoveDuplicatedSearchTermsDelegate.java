@@ -1,4 +1,4 @@
-package io.github.pricescrawler.service.pdcp.delegate.legacy;
+package io.github.pricescrawler.service.pdcp.delegate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.pricescrawler.content.common.dao.product.ProductDao;

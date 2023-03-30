@@ -1,4 +1,4 @@
-package io.github.pricescrawler.service.pdcp.delegate;
+package io.github.pricescrawler.service.base.delegate;
 
 import io.github.pricescrawler.content.common.dao.product.ProductDao;
 import io.github.pricescrawler.content.repository.product.ProductDataRepository;

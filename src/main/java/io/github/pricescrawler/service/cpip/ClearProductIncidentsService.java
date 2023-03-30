@@ -62,4 +62,8 @@ public class ClearProductIncidentsService {
     public void deleteIncident(String key) {
         productIncidentDataRepository.deleteById(key);
     }
+
+    public void closeIncident(String key) {
+        productIncidentDataService.closeIncident(key, false);
+    }
 }

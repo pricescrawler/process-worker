@@ -22,11 +22,6 @@ public class ClearProductIncidentsAdapter {
     }
 
     @Bean
-    public IncidentsLoopDelegate incidentsLoopDelegate() {
-        return new IncidentsLoopDelegate();
-    }
-
-    @Bean
     public FindProductsIncidentsDelegate findIncidentsDelegate() {
         return new FindProductsIncidentsDelegate();
     }
@@ -34,6 +29,11 @@ public class ClearProductIncidentsAdapter {
     @Bean
     public MergeIncidentDelegate mergeIncidentDelegate() {
         return new MergeIncidentDelegate();
+    }
+
+    @Bean
+    public CloseIncidentDelegate closeIncidentDelegate() {
+        return new CloseIncidentDelegate();
     }
 
     @Bean

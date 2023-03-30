@@ -2,8 +2,8 @@
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_01p66u8" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
   <bpmn:process id="clear-products-incidents-process" name="Clear Products Incidents Process" isExecutable="true" camunda:versionTag="1.0.0">
     <bpmn:extensionElements />
-    <bpmn:startEvent id="StartEvent" name="Start">
-      <bpmn:outgoing>Flow_1lz4c3v</bpmn:outgoing>
+    <bpmn:startEvent id="Event_Start" name="Start">
+      <bpmn:outgoing>Flow_01</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:task id="Activity_set-common-variables" name="Set Common Variables">
       <bpmn:extensionElements>
@@ -16,26 +16,35 @@ Logger logger = LoggerFactory.getLogger("Agent CPIP");
 
 logger</camunda:script>
           </camunda:outputParameter>
-          <camunda:outputParameter name="hasManualFlow">true</camunda:outputParameter>
+          <camunda:outputParameter name="hasManualFlow">
+            <camunda:script scriptFormat="groovy">def hasManualFlowInput = execution.getVariable("hasManualFlowInput");
+
+if(hasManualFlowInput == null || hasManualFlowInput) {
+  true
+} else {
+  false
+}</camunda:script>
+          </camunda:outputParameter>
         </camunda:inputOutput>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1lz4c3v</bpmn:incoming>
-      <bpmn:outgoing>Flow_0087lj5</bpmn:outgoing>
+      <bpmn:incoming>Flow_01</bpmn:incoming>
+      <bpmn:outgoing>Flow_02</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:sequenceFlow id="Flow_1lz4c3v" sourceRef="StartEvent" targetRef="Activity_set-common-variables" />
-    <bpmn:endEvent id="EndEvent" name="End">
-      <bpmn:incoming>Flow_0js9zim</bpmn:incoming>
-      <bpmn:incoming>Flow_02hxfiz</bpmn:incoming>
+    <bpmn:endEvent id="Event_end" name="End">
+      <bpmn:incoming>Flow_24</bpmn:incoming>
+      <bpmn:incoming>Flow_34</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:scriptTask id="Activity_error-log" name="Error Log" scriptFormat="groovy">
-      <bpmn:incoming>Flow_1bs3vuw</bpmn:incoming>
-      <bpmn:incoming>Flow_0wxdlm9</bpmn:incoming>
-      <bpmn:incoming>Flow_1url2qg</bpmn:incoming>
-      <bpmn:incoming>Flow_1n3hq2h</bpmn:incoming>
-      <bpmn:incoming>Flow_1wj0uny</bpmn:incoming>
-      <bpmn:incoming>Flow_1jyr8lk</bpmn:incoming>
-      <bpmn:incoming>Flow_1jrvguy</bpmn:incoming>
-      <bpmn:outgoing>Flow_02hxfiz</bpmn:outgoing>
+      <bpmn:incoming>Flow_25</bpmn:incoming>
+      <bpmn:incoming>Flow_31</bpmn:incoming>
+      <bpmn:incoming>Flow_32</bpmn:incoming>
+      <bpmn:incoming>Flow_33</bpmn:incoming>
+      <bpmn:incoming>Flow_27</bpmn:incoming>
+      <bpmn:incoming>Flow_28</bpmn:incoming>
+      <bpmn:incoming>Flow_26</bpmn:incoming>
+      <bpmn:incoming>Flow_30</bpmn:incoming>
+      <bpmn:incoming>Flow_29</bpmn:incoming>
+      <bpmn:outgoing>Flow_34</bpmn:outgoing>
       <bpmn:script>String message = ""
 if ((errorCode != null) &amp;&amp; !errorCode.isEmpty())
 {
@@ -49,9 +58,9 @@ if ((errorMessage != null) &amp;&amp; !errorMessage.isEmpty())
 
 logger.error(message)</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:sequenceFlow id="Flow_0087lj5" sourceRef="Activity_set-common-variables" targetRef="Activity_find-products-incidents" />
-    <bpmn:sequenceFlow id="Flow_1jn1ory" sourceRef="Activity_find-products-incidents" targetRef="Gateway_start-incidents-loop" />
-    <bpmn:serviceTask id="Activity_find-products-incidents" name="Find Products Incidents" camunda:delegateExpression="${findIncidentsDelegate}">
+    <bpmn:sequenceFlow id="Flow_02" sourceRef="Activity_set-common-variables" targetRef="Activity_find-product-incidents" />
+    <bpmn:sequenceFlow id="Flow_03" sourceRef="Activity_find-product-incidents" targetRef="Gateway_start-incidents-loop" />
+    <bpmn:serviceTask id="Activity_find-product-incidents" name="Find Product Incidents" camunda:delegateExpression="${findIncidentsDelegate}">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="groovy">logger.info("Start - FindIncidents");</camunda:script>
@@ -60,10 +69,10 @@ logger.error(message)</bpmn:script>
           <camunda:script scriptFormat="groovy">logger.info("End - FindIncidents");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0087lj5</bpmn:incoming>
-      <bpmn:outgoing>Flow_1jn1ory</bpmn:outgoing>
+      <bpmn:incoming>Flow_02</bpmn:incoming>
+      <bpmn:outgoing>Flow_03</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_start-incidents-loop" default="Flow_0js9zim">
+    <bpmn:exclusiveGateway id="Gateway_start-incidents-loop" default="Flow_24">
       <bpmn:extensionElements>
         <camunda:executionListener event="start">
           <camunda:script scriptFormat="groovy">logger.info("Start - CheckIncidentsSize");</camunda:script>
@@ -73,20 +82,22 @@ logger.error(message)</bpmn:script>
         </camunda:executionListener>
         <camunda:executionListener delegateExpression="${incidentsLoopDelegate}" event="start" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1jn1ory</bpmn:incoming>
-      <bpmn:incoming>Flow_1f8mxs5</bpmn:incoming>
-      <bpmn:incoming>Flow_0hnchnv</bpmn:incoming>
-      <bpmn:incoming>Flow_1git835</bpmn:incoming>
-      <bpmn:incoming>Flow_1yfxjsp</bpmn:incoming>
-      <bpmn:outgoing>Flow_1u8w171</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0js9zim</bpmn:outgoing>
+      <bpmn:incoming>Flow_03</bpmn:incoming>
+      <bpmn:incoming>Flow_23</bpmn:incoming>
+      <bpmn:incoming>Flow_22</bpmn:incoming>
+      <bpmn:incoming>Flow_17</bpmn:incoming>
+      <bpmn:incoming>Flow_19</bpmn:incoming>
+      <bpmn:incoming>Flow_0o7yo4f</bpmn:incoming>
+      <bpmn:incoming>Flow_21</bpmn:incoming>
+      <bpmn:outgoing>Flow_04</bpmn:outgoing>
+      <bpmn:outgoing>Flow_24</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_1u8w171" sourceRef="Gateway_start-incidents-loop" targetRef="Activity_1a9rqkn">
+    <bpmn:sequenceFlow id="Flow_04" sourceRef="Gateway_start-incidents-loop" targetRef="Activity_get-product-incident">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${hasNextProduct}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0js9zim" sourceRef="Gateway_start-incidents-loop" targetRef="EndEvent" />
-    <bpmn:boundaryEvent id="Event_01z1495" attachedToRef="Activity_find-products-incidents">
-      <bpmn:outgoing>Flow_1bs3vuw</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_24" sourceRef="Gateway_start-incidents-loop" targetRef="Event_end" />
+    <bpmn:boundaryEvent id="Event_exception-01" attachedToRef="Activity_find-product-incidents">
+      <bpmn:outgoing>Flow_25</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1tzlo6q" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
     <bpmn:userTask id="Activity_approve-incident-merge" name="Approve Incident Merge">
@@ -110,74 +121,79 @@ logger.info("FormField_ApproveIncidentMerge: " + FormField_ApproveIncidentMerge.
           <camunda:formField id="FormField_ApproveIncidentMerge" label="Approve Incident Merge:" type="boolean">
             <camunda:validation />
           </camunda:formField>
+          <camunda:formField id="FormField_ApproveIncidentClose" label="Close Incident:" type="boolean">
+            <camunda:properties />
+            <camunda:validation />
+          </camunda:formField>
         </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_07hv548</bpmn:incoming>
-      <bpmn:outgoing>Flow_0gq4pxu</bpmn:outgoing>
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:exclusiveGateway id="Gateway_approve-incident-merge" default="Flow_0hnchnv">
-      <bpmn:incoming>Flow_0gq4pxu</bpmn:incoming>
-      <bpmn:outgoing>Flow_054e5ve</bpmn:outgoing>
-      <bpmn:outgoing>Flow_0hnchnv</bpmn:outgoing>
+    <bpmn:exclusiveGateway id="Gateway_approve-incident-merge-or-close" default="Flow_22">
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+      <bpmn:outgoing>Flow_22</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1e43rgr</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_0gq4pxu" sourceRef="Activity_approve-incident-merge" targetRef="Gateway_approve-incident-merge" />
-    <bpmn:sequenceFlow id="Flow_054e5ve" sourceRef="Gateway_approve-incident-merge" targetRef="Activity_merge-incident">
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Activity_approve-incident-merge" targetRef="Gateway_approve-incident-merge-or-close" />
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Gateway_approve-incident-merge-or-close" targetRef="Activity_merge-incident">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${FormField_ApproveIncidentMerge}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_0dkstav" sourceRef="Activity_merge-incident" targetRef="Activity_check-if-incident-was-merged" />
-    <bpmn:exclusiveGateway id="Gateway_check-if-incident-was-merged" default="Flow_1f8mxs5">
-      <bpmn:incoming>Flow_01o5d6r</bpmn:incoming>
-      <bpmn:outgoing>Flow_1unuy33</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1f8mxs5</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_13" sourceRef="Activity_merge-incident" targetRef="Activity_check-if-incident-was-merged" />
+    <bpmn:exclusiveGateway id="Gateway_check-if-incident-was-merged" default="Flow_23">
+      <bpmn:incoming>Flow_14</bpmn:incoming>
+      <bpmn:outgoing>Flow_15</bpmn:outgoing>
+      <bpmn:outgoing>Flow_23</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_01o5d6r" sourceRef="Activity_check-if-incident-was-merged" targetRef="Gateway_check-if-incident-was-merged" />
-    <bpmn:sequenceFlow id="Flow_1unuy33" sourceRef="Gateway_check-if-incident-was-merged" targetRef="Activity_delete-incident">
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="Activity_check-if-incident-was-merged" targetRef="Gateway_check-if-incident-was-merged" />
+    <bpmn:sequenceFlow id="Flow_15" sourceRef="Gateway_check-if-incident-was-merged" targetRef="Activity_delete-incident">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isMerged}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_02hxfiz" sourceRef="Activity_error-log" targetRef="EndEvent" />
-    <bpmn:sequenceFlow id="Flow_1bs3vuw" sourceRef="Event_01z1495" targetRef="Activity_error-log" />
-    <bpmn:boundaryEvent id="Event_05sj4g2" attachedToRef="Activity_merge-incident">
-      <bpmn:outgoing>Flow_0wxdlm9</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_34" sourceRef="Activity_error-log" targetRef="Event_end" />
+    <bpmn:sequenceFlow id="Flow_25" sourceRef="Event_exception-01" targetRef="Activity_error-log" />
+    <bpmn:boundaryEvent id="Event_exception-07" attachedToRef="Activity_merge-incident">
+      <bpmn:outgoing>Flow_31</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1s0sgu3" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_0wxdlm9" sourceRef="Event_05sj4g2" targetRef="Activity_error-log" />
-    <bpmn:boundaryEvent id="Event_18staat" attachedToRef="Activity_check-if-incident-was-merged">
-      <bpmn:outgoing>Flow_1url2qg</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_31" sourceRef="Event_exception-07" targetRef="Activity_error-log" />
+    <bpmn:boundaryEvent id="Event_exception-08" attachedToRef="Activity_check-if-incident-was-merged">
+      <bpmn:outgoing>Flow_32</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1x04bsm" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1url2qg" sourceRef="Event_18staat" targetRef="Activity_error-log" />
-    <bpmn:boundaryEvent id="Event_00xb64h" attachedToRef="Activity_delete-incident">
-      <bpmn:outgoing>Flow_1n3hq2h</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_32" sourceRef="Event_exception-08" targetRef="Activity_error-log" />
+    <bpmn:boundaryEvent id="Event_exception-09" attachedToRef="Activity_delete-incident">
+      <bpmn:outgoing>Flow_33</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1dk9hj1" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1n3hq2h" sourceRef="Event_00xb64h" targetRef="Activity_error-log" />
-    <bpmn:sequenceFlow id="Flow_1f8mxs5" sourceRef="Gateway_check-if-incident-was-merged" targetRef="Gateway_start-incidents-loop" />
-    <bpmn:sequenceFlow id="Flow_0hnchnv" sourceRef="Gateway_approve-incident-merge" targetRef="Gateway_start-incidents-loop" />
-    <bpmn:exclusiveGateway id="Gateway_is-merged-or-closed" default="Flow_16w849l">
-      <bpmn:incoming>Flow_044aric</bpmn:incoming>
-      <bpmn:outgoing>Flow_16w849l</bpmn:outgoing>
-      <bpmn:outgoing>Flow_08o5emf</bpmn:outgoing>
-      <bpmn:outgoing>Flow_1yfxjsp</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_33" sourceRef="Event_exception-09" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_23" sourceRef="Gateway_check-if-incident-was-merged" targetRef="Gateway_start-incidents-loop" />
+    <bpmn:sequenceFlow id="Flow_22" sourceRef="Gateway_approve-incident-merge-or-close" targetRef="Gateway_start-incidents-loop" />
+    <bpmn:exclusiveGateway id="Gateway_is-merged-or-closed" default="Flow_07">
+      <bpmn:incoming>Flow_06</bpmn:incoming>
+      <bpmn:outgoing>Flow_07</bpmn:outgoing>
+      <bpmn:outgoing>Flow_18</bpmn:outgoing>
+      <bpmn:outgoing>Flow_19</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_16w849l" sourceRef="Gateway_is-merged-or-closed" targetRef="Activity_get-product-data" />
-    <bpmn:sequenceFlow id="Flow_044aric" sourceRef="Activity_check-if-is-merged-closed" targetRef="Gateway_is-merged-or-closed" />
-    <bpmn:sequenceFlow id="Flow_08o5emf" sourceRef="Gateway_is-merged-or-closed" targetRef="Activity_check-if-incident-was-merged">
+    <bpmn:sequenceFlow id="Flow_07" sourceRef="Gateway_is-merged-or-closed" targetRef="Activity_get-product-data" />
+    <bpmn:sequenceFlow id="Flow_06" sourceRef="Activity_check-if-is-merged-closed" targetRef="Gateway_is-merged-or-closed" />
+    <bpmn:sequenceFlow id="Flow_18" sourceRef="Gateway_is-merged-or-closed" targetRef="Activity_check-if-incident-was-merged">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isMerged}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:boundaryEvent id="Event_1rwcqvh" attachedToRef="Activity_check-if-is-merged-closed">
-      <bpmn:outgoing>Flow_1wj0uny</bpmn:outgoing>
+    <bpmn:boundaryEvent id="Event_exception-03" attachedToRef="Activity_check-if-is-merged-closed">
+      <bpmn:outgoing>Flow_27</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_0bndv9f" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1wj0uny" sourceRef="Event_1rwcqvh" targetRef="Activity_error-log" />
-    <bpmn:sequenceFlow id="Flow_1d93pqj" sourceRef="Activity_get-product-data" targetRef="Activity_1flhot7" />
-    <bpmn:boundaryEvent id="Event_04v6k92" attachedToRef="Activity_get-product-data">
-      <bpmn:outgoing>Flow_1jyr8lk</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_27" sourceRef="Event_exception-03" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_08" sourceRef="Activity_get-product-data" targetRef="Activity_describe-and-check-incident" />
+    <bpmn:boundaryEvent id="Event_exception-04" attachedToRef="Activity_get-product-data">
+      <bpmn:outgoing>Flow_28</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_1adohtp" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1jyr8lk" sourceRef="Event_04v6k92" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_28" sourceRef="Event_exception-04" targetRef="Activity_error-log" />
     <bpmn:serviceTask id="Activity_get-product-data" name="Get Product Data" camunda:delegateExpression="${findProductByIdDelegate}">
-      <bpmn:incoming>Flow_16w849l</bpmn:incoming>
-      <bpmn:outgoing>Flow_1d93pqj</bpmn:outgoing>
+      <bpmn:incoming>Flow_07</bpmn:incoming>
+      <bpmn:outgoing>Flow_08</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_delete-incident" name="Delete Incident" camunda:delegateExpression="${deleteIncidentByIdDelegate}">
       <bpmn:extensionElements>
@@ -188,12 +204,12 @@ logger.info("FormField_ApproveIncidentMerge: " + FormField_ApproveIncidentMerge.
           <camunda:script scriptFormat="groovy">logger.info("End - DeleteIncident");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1unuy33</bpmn:incoming>
-      <bpmn:outgoing>Flow_10ekkve</bpmn:outgoing>
+      <bpmn:incoming>Flow_15</bpmn:incoming>
+      <bpmn:outgoing>Flow_16</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:scriptTask id="Activity_check-if-is-merged-closed" name="Check if is  Closed or Merged" scriptFormat="groovy">
-      <bpmn:incoming>Flow_1dqea5s</bpmn:incoming>
-      <bpmn:outgoing>Flow_044aric</bpmn:outgoing>
+      <bpmn:incoming>Flow_05</bpmn:incoming>
+      <bpmn:outgoing>Flow_06</bpmn:outgoing>
       <bpmn:script>import groovy.json.JsonSlurper;
 
 def incident = execution.getVariable("productIncidentData");
@@ -214,9 +230,9 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
           <camunda:script scriptFormat="groovy">logger.info("End - MergeIncident");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_054e5ve</bpmn:incoming>
-      <bpmn:incoming>Flow_1bmu96s</bpmn:incoming>
-      <bpmn:outgoing>Flow_0dkstav</bpmn:outgoing>
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:incoming>Flow_20</bpmn:incoming>
+      <bpmn:outgoing>Flow_13</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Activity_check-if-incident-was-merged" name="Check if Incident was Merged" camunda:delegateExpression="${checkIfIncidentWasMergedDelegate}">
       <bpmn:extensionElements>
@@ -227,193 +243,254 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
           <camunda:script scriptFormat="groovy">logger.info("End - CheckIfIncidentWasMerged");</camunda:script>
         </camunda:executionListener>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_0dkstav</bpmn:incoming>
-      <bpmn:incoming>Flow_08o5emf</bpmn:incoming>
-      <bpmn:outgoing>Flow_01o5d6r</bpmn:outgoing>
+      <bpmn:incoming>Flow_13</bpmn:incoming>
+      <bpmn:incoming>Flow_18</bpmn:incoming>
+      <bpmn:outgoing>Flow_14</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_end-incidents-loop">
-      <bpmn:incoming>Flow_10ekkve</bpmn:incoming>
-      <bpmn:outgoing>Flow_1git835</bpmn:outgoing>
+      <bpmn:incoming>Flow_16</bpmn:incoming>
+      <bpmn:outgoing>Flow_17</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_10ekkve" sourceRef="Activity_delete-incident" targetRef="Gateway_end-incidents-loop" />
-    <bpmn:sequenceFlow id="Flow_1git835" sourceRef="Gateway_end-incidents-loop" targetRef="Gateway_start-incidents-loop" />
-    <bpmn:sequenceFlow id="Flow_1yfxjsp" sourceRef="Gateway_is-merged-or-closed" targetRef="Gateway_start-incidents-loop">
+    <bpmn:sequenceFlow id="Flow_16" sourceRef="Activity_delete-incident" targetRef="Gateway_end-incidents-loop" />
+    <bpmn:sequenceFlow id="Flow_17" sourceRef="Gateway_end-incidents-loop" targetRef="Gateway_start-incidents-loop" />
+    <bpmn:sequenceFlow id="Flow_19" sourceRef="Gateway_is-merged-or-closed" targetRef="Gateway_start-incidents-loop">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${isClosed}</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_1dqea5s" sourceRef="Activity_1a9rqkn" targetRef="Activity_check-if-is-merged-closed" />
-    <bpmn:boundaryEvent id="Event_0jjiz0b" attachedToRef="Activity_1a9rqkn">
-      <bpmn:outgoing>Flow_1jrvguy</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_05" sourceRef="Activity_get-product-incident" targetRef="Activity_check-if-is-merged-closed" />
+    <bpmn:boundaryEvent id="Event_exception-02" attachedToRef="Activity_get-product-incident">
+      <bpmn:outgoing>Flow_26</bpmn:outgoing>
       <bpmn:errorEventDefinition id="ErrorEventDefinition_08x116e" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
     </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_1jrvguy" sourceRef="Event_0jjiz0b" targetRef="Activity_error-log" />
-    <bpmn:serviceTask id="Activity_1a9rqkn" name="Get Product Incident" camunda:delegateExpression="${findProductIncidentByIdDelegate}">
-      <bpmn:incoming>Flow_1u8w171</bpmn:incoming>
-      <bpmn:outgoing>Flow_1dqea5s</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_26" sourceRef="Event_exception-02" targetRef="Activity_error-log" />
+    <bpmn:serviceTask id="Activity_get-product-incident" name="Get Product Incident" camunda:delegateExpression="${findProductIncidentByIdDelegate}">
+      <bpmn:incoming>Flow_04</bpmn:incoming>
+      <bpmn:outgoing>Flow_05</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_0p7up07" sourceRef="Activity_1flhot7" targetRef="Gateway_1lvz2oi" />
-    <bpmn:exclusiveGateway id="Gateway_1lvz2oi" default="Flow_07hv548">
-      <bpmn:incoming>Flow_0p7up07</bpmn:incoming>
-      <bpmn:outgoing>Flow_1bmu96s</bpmn:outgoing>
-      <bpmn:outgoing>Flow_07hv548</bpmn:outgoing>
+    <bpmn:sequenceFlow id="Flow_09" sourceRef="Activity_describe-and-check-incident" targetRef="Gateway_is-merge-condition" />
+    <bpmn:exclusiveGateway id="Gateway_is-merge-condition" default="Flow_21">
+      <bpmn:incoming>Flow_09</bpmn:incoming>
+      <bpmn:outgoing>Flow_20</bpmn:outgoing>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+      <bpmn:outgoing>Flow_21</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Activity_1flhot7" name="Describe and Check Incident" camunda:delegateExpression="${describeIncidentDelegate}">
-      <bpmn:incoming>Flow_1d93pqj</bpmn:incoming>
-      <bpmn:outgoing>Flow_0p7up07</bpmn:outgoing>
+    <bpmn:serviceTask id="Activity_describe-and-check-incident" name="Describe and Check Incident" camunda:delegateExpression="${describeIncidentDelegate}">
+      <bpmn:incoming>Flow_08</bpmn:incoming>
+      <bpmn:outgoing>Flow_09</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:sequenceFlow id="Flow_1bmu96s" sourceRef="Gateway_1lvz2oi" targetRef="Activity_merge-incident">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${approveIncidentMerge}</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_20" sourceRef="Gateway_is-merge-condition" targetRef="Activity_merge-incident">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="groovy">def hasManualFlow = execution.getVariable("hasManualFlow");
+def approveIncidentMerge = execution.getVariable("approveIncidentMerge");
+
+approveIncidentMerge &amp;&amp; !hasManualFlow</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_07hv548" sourceRef="Gateway_1lvz2oi" targetRef="Activity_approve-incident-merge" />
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Gateway_is-merge-condition" targetRef="Activity_approve-incident-merge">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression" language="groovy">def hasManualFlow = execution.getVariable("hasManualFlow");
+def approveIncidentMerge = execution.getVariable("approveIncidentMerge");
+
+!approveIncidentMerge &amp;&amp; hasManualFlow</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1e43rgr" sourceRef="Gateway_approve-incident-merge-or-close" targetRef="Activity_close-incident">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${FormField_ApproveIncidentClose}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0o7yo4f" sourceRef="Activity_close-incident" targetRef="Gateway_start-incidents-loop" />
+    <bpmn:boundaryEvent id="Event_exception-06" attachedToRef="Activity_close-incident">
+      <bpmn:outgoing>Flow_30</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0iw44p2" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_30" sourceRef="Event_exception-06" targetRef="Activity_error-log" />
+    <bpmn:serviceTask id="Activity_close-incident" name="Close Incident" camunda:delegateExpression="${closeIncidentDelegate}">
+      <bpmn:incoming>Flow_1e43rgr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o7yo4f</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_exception-05" attachedToRef="Activity_describe-and-check-incident">
+      <bpmn:outgoing>Flow_29</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0tskr3q" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_29" sourceRef="Event_exception-05" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_21" sourceRef="Gateway_is-merge-condition" targetRef="Gateway_start-incidents-loop" />
+    <bpmn:sequenceFlow id="Flow_01" sourceRef="Event_Start" targetRef="Activity_set-common-variables" />
   </bpmn:process>
   <bpmn:error id="Error_1wbqs71" name="Exception" errorCode="java.lang.Exception" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="clear-products-incidents-process">
-      <bpmndi:BPMNEdge id="Flow_1bmu96s_di" bpmnElement="Flow_1bmu96s">
-        <di:waypoint x="1270" y="205" />
-        <di:waypoint x="1270" y="140" />
-        <di:waypoint x="1600" y="140" />
-        <di:waypoint x="1600" y="190" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0p7up07_di" bpmnElement="Flow_0p7up07">
-        <di:waypoint x="1210" y="230" />
-        <di:waypoint x="1245" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1jrvguy_di" bpmnElement="Flow_1jrvguy">
-        <di:waypoint x="600" y="288" />
-        <di:waypoint x="600" y="360" />
-        <di:waypoint x="2110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1dqea5s_di" bpmnElement="Flow_1dqea5s">
-        <di:waypoint x="700" y="230" />
-        <di:waypoint x="740" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1yfxjsp_di" bpmnElement="Flow_1yfxjsp">
-        <di:waypoint x="910" y="255" />
-        <di:waypoint x="910" y="320" />
-        <di:waypoint x="540" y="320" />
-        <di:waypoint x="540" y="255" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1git835_di" bpmnElement="Flow_1git835">
-        <di:waypoint x="2070" y="255" />
-        <di:waypoint x="2070" y="320" />
-        <di:waypoint x="540" y="320" />
-        <di:waypoint x="540" y="255" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10ekkve_di" bpmnElement="Flow_10ekkve">
-        <di:waypoint x="2010" y="230" />
-        <di:waypoint x="2045" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1jyr8lk_di" bpmnElement="Flow_1jyr8lk">
-        <di:waypoint x="970" y="288" />
-        <di:waypoint x="970" y="360" />
-        <di:waypoint x="2110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1d93pqj_di" bpmnElement="Flow_1d93pqj">
-        <di:waypoint x="1070" y="230" />
-        <di:waypoint x="1110" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1wj0uny_di" bpmnElement="Flow_1wj0uny">
-        <di:waypoint x="740" y="288" />
-        <di:waypoint x="740" y="360" />
-        <di:waypoint x="2110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_08o5emf_di" bpmnElement="Flow_08o5emf">
-        <di:waypoint x="910" y="205" />
-        <di:waypoint x="910" y="130" />
-        <di:waypoint x="1740" y="130" />
-        <di:waypoint x="1740" y="190" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_044aric_di" bpmnElement="Flow_044aric">
-        <di:waypoint x="840" y="230" />
-        <di:waypoint x="885" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_16w849l_di" bpmnElement="Flow_16w849l">
-        <di:waypoint x="935" y="230" />
-        <di:waypoint x="970" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0hnchnv_di" bpmnElement="Flow_0hnchnv">
-        <di:waypoint x="1490" y="255" />
-        <di:waypoint x="1490" y="320" />
-        <di:waypoint x="540" y="320" />
-        <di:waypoint x="540" y="255" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1f8mxs5_di" bpmnElement="Flow_1f8mxs5">
-        <di:waypoint x="1850" y="255" />
-        <di:waypoint x="1850" y="320" />
-        <di:waypoint x="540" y="320" />
-        <di:waypoint x="540" y="255" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1n3hq2h_di" bpmnElement="Flow_1n3hq2h">
-        <di:waypoint x="1910" y="288" />
-        <di:waypoint x="1910" y="360" />
-        <di:waypoint x="2110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1url2qg_di" bpmnElement="Flow_1url2qg">
-        <di:waypoint x="1690" y="288" />
-        <di:waypoint x="1690" y="360" />
-        <di:waypoint x="2110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0wxdlm9_di" bpmnElement="Flow_0wxdlm9">
-        <di:waypoint x="1550" y="288" />
-        <di:waypoint x="1550" y="360" />
-        <di:waypoint x="2110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1bs3vuw_di" bpmnElement="Flow_1bs3vuw">
-        <di:waypoint x="370" y="288" />
-        <di:waypoint x="370" y="360" />
-        <di:waypoint x="2110" y="360" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_02hxfiz_di" bpmnElement="Flow_02hxfiz">
-        <di:waypoint x="2160" y="320" />
-        <di:waypoint x="2160" y="248" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1unuy33_di" bpmnElement="Flow_1unuy33">
-        <di:waypoint x="1875" y="230" />
-        <di:waypoint x="1910" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_01o5d6r_di" bpmnElement="Flow_01o5d6r">
-        <di:waypoint x="1790" y="230" />
-        <di:waypoint x="1825" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0dkstav_di" bpmnElement="Flow_0dkstav">
-        <di:waypoint x="1650" y="230" />
-        <di:waypoint x="1690" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_054e5ve_di" bpmnElement="Flow_054e5ve">
-        <di:waypoint x="1515" y="230" />
-        <di:waypoint x="1550" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0gq4pxu_di" bpmnElement="Flow_0gq4pxu">
-        <di:waypoint x="1430" y="230" />
-        <di:waypoint x="1465" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0js9zim_di" bpmnElement="Flow_0js9zim">
-        <di:waypoint x="540" y="205" />
-        <di:waypoint x="540" y="100" />
-        <di:waypoint x="2160" y="100" />
-        <di:waypoint x="2160" y="212" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1u8w171_di" bpmnElement="Flow_1u8w171">
-        <di:waypoint x="565" y="230" />
-        <di:waypoint x="600" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1jn1ory_di" bpmnElement="Flow_1jn1ory">
-        <di:waypoint x="470" y="230" />
-        <di:waypoint x="515" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0087lj5_di" bpmnElement="Flow_0087lj5">
-        <di:waypoint x="330" y="230" />
-        <di:waypoint x="370" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1lz4c3v_di" bpmnElement="Flow_1lz4c3v">
+      <bpmndi:BPMNEdge id="Flow_1v4tzqn_di" bpmnElement="Flow_01">
         <di:waypoint x="188" y="230" />
         <di:waypoint x="230" y="230" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_07hv548_di" bpmnElement="Flow_07hv548">
+      <bpmndi:BPMNEdge id="Flow_1agz6be_di" bpmnElement="Flow_21">
+        <di:waypoint x="1270" y="255" />
+        <di:waypoint x="1270" y="340" />
+        <di:waypoint x="540" y="340" />
+        <di:waypoint x="540" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xse6we_di" bpmnElement="Flow_29">
+        <di:waypoint x="1110" y="288" />
+        <di:waypoint x="1110" y="470" />
+        <di:waypoint x="2210" y="470" />
+        <di:waypoint x="2210" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1587i6m_di" bpmnElement="Flow_30">
+        <di:waypoint x="1470" y="398" />
+        <di:waypoint x="1470" y="470" />
+        <di:waypoint x="2210" y="470" />
+        <di:waypoint x="2210" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o7yo4f_di" bpmnElement="Flow_0o7yo4f">
+        <di:waypoint x="1520" y="380" />
+        <di:waypoint x="1520" y="430" />
+        <di:waypoint x="540" y="430" />
+        <di:waypoint x="540" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e43rgr_di" bpmnElement="Flow_1e43rgr">
+        <di:waypoint x="1520" y="255" />
+        <di:waypoint x="1520" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07hv548_di" bpmnElement="Flow_10">
         <di:waypoint x="1295" y="230" />
         <di:waypoint x="1330" y="230" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent">
+      <bpmndi:BPMNEdge id="Flow_1bmu96s_di" bpmnElement="Flow_20">
+        <di:waypoint x="1270" y="205" />
+        <di:waypoint x="1270" y="150" />
+        <di:waypoint x="1650" y="150" />
+        <di:waypoint x="1650" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0p7up07_di" bpmnElement="Flow_09">
+        <di:waypoint x="1210" y="230" />
+        <di:waypoint x="1245" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jrvguy_di" bpmnElement="Flow_26">
+        <di:waypoint x="600" y="288" />
+        <di:waypoint x="600" y="470" />
+        <di:waypoint x="2210" y="470" />
+        <di:waypoint x="2210" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dqea5s_di" bpmnElement="Flow_05">
+        <di:waypoint x="700" y="230" />
+        <di:waypoint x="740" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yfxjsp_di" bpmnElement="Flow_19">
+        <di:waypoint x="910" y="255" />
+        <di:waypoint x="910" y="340" />
+        <di:waypoint x="540" y="340" />
+        <di:waypoint x="540" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1git835_di" bpmnElement="Flow_17">
+        <di:waypoint x="2120" y="255" />
+        <di:waypoint x="2120" y="430" />
+        <di:waypoint x="540" y="430" />
+        <di:waypoint x="540" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10ekkve_di" bpmnElement="Flow_16">
+        <di:waypoint x="2060" y="230" />
+        <di:waypoint x="2095" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jyr8lk_di" bpmnElement="Flow_28">
+        <di:waypoint x="970" y="288" />
+        <di:waypoint x="970" y="470" />
+        <di:waypoint x="2210" y="470" />
+        <di:waypoint x="2210" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1d93pqj_di" bpmnElement="Flow_08">
+        <di:waypoint x="1070" y="230" />
+        <di:waypoint x="1110" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wj0uny_di" bpmnElement="Flow_27">
+        <di:waypoint x="740" y="288" />
+        <di:waypoint x="740" y="470" />
+        <di:waypoint x="2210" y="470" />
+        <di:waypoint x="2210" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08o5emf_di" bpmnElement="Flow_18">
+        <di:waypoint x="910" y="205" />
+        <di:waypoint x="910" y="110" />
+        <di:waypoint x="1790" y="110" />
+        <di:waypoint x="1790" y="190" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_044aric_di" bpmnElement="Flow_06">
+        <di:waypoint x="840" y="230" />
+        <di:waypoint x="885" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16w849l_di" bpmnElement="Flow_07">
+        <di:waypoint x="935" y="230" />
+        <di:waypoint x="970" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hnchnv_di" bpmnElement="Flow_22">
+        <di:waypoint x="1508" y="243" />
+        <di:waypoint x="1420" y="340" />
+        <di:waypoint x="540" y="340" />
+        <di:waypoint x="540" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1f8mxs5_di" bpmnElement="Flow_23">
+        <di:waypoint x="1900" y="255" />
+        <di:waypoint x="1900" y="430" />
+        <di:waypoint x="540" y="430" />
+        <di:waypoint x="540" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1n3hq2h_di" bpmnElement="Flow_33">
+        <di:waypoint x="1960" y="288" />
+        <di:waypoint x="1960" y="340" />
+        <di:waypoint x="2160" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1url2qg_di" bpmnElement="Flow_32">
+        <di:waypoint x="1740" y="288" />
+        <di:waypoint x="1740" y="340" />
+        <di:waypoint x="2160" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0wxdlm9_di" bpmnElement="Flow_31">
+        <di:waypoint x="1600" y="288" />
+        <di:waypoint x="1600" y="340" />
+        <di:waypoint x="2160" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bs3vuw_di" bpmnElement="Flow_25">
+        <di:waypoint x="370" y="288" />
+        <di:waypoint x="370" y="470" />
+        <di:waypoint x="2210" y="470" />
+        <di:waypoint x="2210" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02hxfiz_di" bpmnElement="Flow_34">
+        <di:waypoint x="2210" y="300" />
+        <di:waypoint x="2210" y="248" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1unuy33_di" bpmnElement="Flow_15">
+        <di:waypoint x="1925" y="230" />
+        <di:waypoint x="1960" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_01o5d6r_di" bpmnElement="Flow_14">
+        <di:waypoint x="1840" y="230" />
+        <di:waypoint x="1875" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dkstav_di" bpmnElement="Flow_13">
+        <di:waypoint x="1700" y="230" />
+        <di:waypoint x="1740" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_054e5ve_di" bpmnElement="Flow_12">
+        <di:waypoint x="1545" y="230" />
+        <di:waypoint x="1600" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0gq4pxu_di" bpmnElement="Flow_11">
+        <di:waypoint x="1430" y="230" />
+        <di:waypoint x="1495" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0js9zim_di" bpmnElement="Flow_24">
+        <di:waypoint x="540" y="205" />
+        <di:waypoint x="540" y="70" />
+        <di:waypoint x="2210" y="70" />
+        <di:waypoint x="2210" y="212" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1u8w171_di" bpmnElement="Flow_04">
+        <di:waypoint x="565" y="230" />
+        <di:waypoint x="600" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jn1ory_di" bpmnElement="Flow_03">
+        <di:waypoint x="470" y="230" />
+        <di:waypoint x="515" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0087lj5_di" bpmnElement="Flow_02">
+        <di:waypoint x="330" y="230" />
+        <di:waypoint x="370" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Event_Start">
         <dc:Bounds x="152" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="158" y="255" width="25" height="14" />
@@ -422,16 +499,16 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
       <bpmndi:BPMNShape id="Activity_1ve45sj_di" bpmnElement="Activity_set-common-variables">
         <dc:Bounds x="230" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_0cr57sv_di" bpmnElement="EndEvent">
-        <dc:Bounds x="2142" y="212" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_0cr57sv_di" bpmnElement="Event_end">
+        <dc:Bounds x="2192" y="212" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2112" y="223" width="20" height="14" />
+          <dc:Bounds x="2162" y="223" width="20" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1hfvrm8_di" bpmnElement="Activity_error-log">
-        <dc:Bounds x="2110" y="320" width="100" height="80" />
+        <dc:Bounds x="2160" y="300" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_11vo2z7_di" bpmnElement="Activity_find-products-incidents">
+      <bpmndi:BPMNShape id="Activity_11vo2z7_di" bpmnElement="Activity_find-product-incidents">
         <dc:Bounds x="370" y="190" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
@@ -441,11 +518,11 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
       <bpmndi:BPMNShape id="Activity_0hkmpn2_di" bpmnElement="Activity_approve-incident-merge">
         <dc:Bounds x="1330" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_0ei6pba_di" bpmnElement="Gateway_approve-incident-merge" isMarkerVisible="true">
-        <dc:Bounds x="1465" y="205" width="50" height="50" />
+      <bpmndi:BPMNShape id="Gateway_0ei6pba_di" bpmnElement="Gateway_approve-incident-merge-or-close" isMarkerVisible="true">
+        <dc:Bounds x="1495" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1g7lf5c_di" bpmnElement="Gateway_check-if-incident-was-merged" isMarkerVisible="true">
-        <dc:Bounds x="1825" y="205" width="50" height="50" />
+        <dc:Bounds x="1875" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_0gbeimg_di" bpmnElement="Gateway_is-merged-or-closed" isMarkerVisible="true">
         <dc:Bounds x="885" y="205" width="50" height="50" />
@@ -454,50 +531,59 @@ logger.info("IsClosed: ${isClosed}");</bpmn:script>
         <dc:Bounds x="970" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_17hum8w_di" bpmnElement="Activity_delete-incident">
-        <dc:Bounds x="1910" y="190" width="100" height="80" />
+        <dc:Bounds x="1960" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0ulxj65_di" bpmnElement="Activity_check-if-is-merged-closed">
         <dc:Bounds x="740" y="190" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_04e3o62_di" bpmnElement="Activity_merge-incident">
-        <dc:Bounds x="1550" y="190" width="100" height="80" />
+        <dc:Bounds x="1600" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1c3msqd_di" bpmnElement="Activity_check-if-incident-was-merged">
-        <dc:Bounds x="1690" y="190" width="100" height="80" />
+        <dc:Bounds x="1740" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_1c9hjus_di" bpmnElement="Gateway_end-incidents-loop" isMarkerVisible="true">
-        <dc:Bounds x="2045" y="205" width="50" height="50" />
+        <dc:Bounds x="2095" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1ug02t7_di" bpmnElement="Activity_1a9rqkn">
+      <bpmndi:BPMNShape id="Activity_1ug02t7_di" bpmnElement="Activity_get-product-incident">
         <dc:Bounds x="600" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_1lvz2oi_di" bpmnElement="Gateway_1lvz2oi" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="Gateway_1lvz2oi_di" bpmnElement="Gateway_is-merge-condition" isMarkerVisible="true">
         <dc:Bounds x="1245" y="205" width="50" height="50" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_1e51l63_di" bpmnElement="Activity_1flhot7">
+      <bpmndi:BPMNShape id="Activity_1e51l63_di" bpmnElement="Activity_describe-and-check-incident">
         <dc:Bounds x="1110" y="190" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1uzj3gc" bpmnElement="Event_0jjiz0b">
+      <bpmndi:BPMNShape id="Activity_08jwvnv_di" bpmnElement="Activity_close-incident">
+        <dc:Bounds x="1470" y="300" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0v0yc73" bpmnElement="Event_exception-05">
+        <dc:Bounds x="1092" y="252" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1narmfl" bpmnElement="Event_exception-06">
+        <dc:Bounds x="1452" y="362" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1uzj3gc" bpmnElement="Event_exception-02">
         <dc:Bounds x="582" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_04v6k92_di" bpmnElement="Event_04v6k92">
+      <bpmndi:BPMNShape id="Event_04v6k92_di" bpmnElement="Event_exception-04">
         <dc:Bounds x="952" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_1rwcqvh_di" bpmnElement="Event_1rwcqvh">
+      <bpmndi:BPMNShape id="Event_1rwcqvh_di" bpmnElement="Event_exception-03">
         <dc:Bounds x="722" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_00xb64h_di" bpmnElement="Event_00xb64h">
-        <dc:Bounds x="1892" y="252" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_00xb64h_di" bpmnElement="Event_exception-09">
+        <dc:Bounds x="1942" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_18staat_di" bpmnElement="Event_18staat">
-        <dc:Bounds x="1672" y="252" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_18staat_di" bpmnElement="Event_exception-08">
+        <dc:Bounds x="1722" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_05sj4g2_di" bpmnElement="Event_05sj4g2">
-        <dc:Bounds x="1532" y="252" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_05sj4g2_di" bpmnElement="Event_exception-07">
+        <dc:Bounds x="1582" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_01z1495_di" bpmnElement="Event_01z1495">
+      <bpmndi:BPMNShape id="Event_01z1495_di" bpmnElement="Event_exception-01">
         <dc:Bounds x="352" y="252" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
