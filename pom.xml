@@ -2,7 +2,7 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.github.prices-crawler</groupId>
+    <groupId>io.github.pricescrawler</groupId>
     <artifactId>prices-crawler-process-worker</artifactId>
     <version>0.0.1</version>
 
@@ -122,17 +122,17 @@
 
         <!-- Prices Crawler dependencies -->
         <dependency>
-            <groupId>io.github.prices-crawler.content</groupId>
+            <groupId>io.github.pricescrawler.content</groupId>
             <artifactId>prices-crawler-content-common</artifactId>
             <version>${prices-crawler-content.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.prices-crawler.content</groupId>
+            <groupId>io.github.pricescrawler.content</groupId>
             <artifactId>prices-crawler-content-repository</artifactId>
             <version>${prices-crawler-content.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.prices-crawler.content</groupId>
+            <groupId>io.github.pricescrawler.content</groupId>
             <artifactId>prices-crawler-content-service</artifactId>
             <version>${prices-crawler-content.version}</version>
         </dependency>

@@ -9,6 +9,8 @@ import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.spin.Spin;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Comparator;
+
 public class FindProductsIncidentsDelegate implements JavaDelegate {
     @Autowired
     private ClearProductIncidentsService clearProductIncidentsService;
@@ -16,7 +18,8 @@ public class FindProductsIncidentsDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws JsonProcessingException {
         var incidents = clearProductIncidentsService.findAllProductIncidents();
-        var incidentsIds = incidents.stream().map(ProductIncidentDao::getId).toList();
+        var comparator = Comparator.comparingInt(obj -> ((ProductIncidentDao) obj).getHits());
+        var incidentsIds = incidents.stream().sorted(comparator.reversed()).map(ProductIncidentDao::getId).toList();
         var json = JsonUtils.convertObjectToString(incidents);
         delegateExecution.setVariable("incidents", Spin.JSON(json));
         delegateExecution.setVariable("incidentsIds", Spin.JSON(incidentsIds));
