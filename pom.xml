@@ -19,7 +19,7 @@
         <groovy.version>3.0.17</groovy.version>
         <camunda.version>7.19.0</camunda.version>
         <postgres.version>42.6.0</postgres.version>
-        <springdoc.version>1.6.15</springdoc.version>
+        <springdoc.version>1.7.0</springdoc.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <prices-crawler-content.version>0.0.1</prices-crawler-content.version>
         <de.flapdoodle.embed.mongo.version>3.5.4</de.flapdoodle.embed.mongo.version>
