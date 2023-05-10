@@ -70,7 +70,7 @@ logger.error(message)</bpmn:script>
       <bpmn:incoming>Flow_03</bpmn:incoming>
       <bpmn:outgoing>Flow_04</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Activity_restore-products-incidents" name="Restore Products Incidents" camunda:delegateExpression="${productIncidentImporterDelegate}">
+    <bpmn:serviceTask id="Activity_restore-products-incidents" name="Restore Product Incidents" camunda:delegateExpression="${productIncidentImporterDelegate}">
       <bpmn:extensionElements>
         <camunda:executionListener event="end">
           <camunda:script scriptFormat="groovy">logger.info("End - ImportProductsIncidents");</camunda:script>

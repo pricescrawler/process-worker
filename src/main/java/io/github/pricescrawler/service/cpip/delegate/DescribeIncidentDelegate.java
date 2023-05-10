@@ -1,5 +1,6 @@
 package io.github.pricescrawler.service.cpip.delegate;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.pricescrawler.config.ConstValues;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataRepository;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -71,7 +71,8 @@ public class DescribeIncidentDelegate implements JavaDelegate {
         if (mergeUrlIncident &&
                 (isProductUrlIncident || isEanUpcListIncident
                         || (isNameIncident
-                        && equalWordsAndCountsIgnoringOrder(diffOld.toString(), diffNew.toString())))) {
+                        && equalWordsAndCountsIgnoringOrder(diffOld.toString(), diffNew.toString())))
+                || isNameAndBrandIncident(productJson, products)) {
             delegateExecution.setVariable("approveIncidentMerge", true);
         } else {
             delegateExecution.setVariable("approveIncidentMerge", false);
@@ -84,11 +85,20 @@ public class DescribeIncidentDelegate implements JavaDelegate {
         }
     }
 
+    private boolean isNameAndBrandIncident(JsonNode productJson, JsonNode products) {
+        if (products.isArray() && products.size() > 0) {
+            return equalWordsAndCountsIgnoringOrder(productJson.get("name").asText(),
+                    products.get(0).get("name").asText() + " " + products.get(0).get("brand").asText());
+        }
+
+        return false;
+    }
+
     private boolean equalWordsAndCountsIgnoringOrder(String phrase, String phrase2) {
-        Map<String, Long> wordCount = Arrays.stream(phrase.toLowerCase().split("\\W+"))
+        var wordCount = Arrays.stream(phrase.toLowerCase().split("\\W+"))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-        Map<String, Long> wordCount2 = Arrays.stream(phrase2.toLowerCase().split("\\W+"))
+        var wordCount2 = Arrays.stream(phrase2.toLowerCase().split("\\W+"))
                 .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
         return wordCount.equals(wordCount2);
