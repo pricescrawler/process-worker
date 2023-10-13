@@ -86,7 +86,7 @@ public class DescribeIncidentDelegate implements JavaDelegate {
     }
 
     private boolean isNameAndBrandIncident(JsonNode productJson, JsonNode products) {
-        if (products.isArray() && products.size() > 0) {
+        if (products.isArray() && !products.isEmpty()) {
             return equalWordsAndCountsIgnoringOrder(productJson.get("name").asText(),
                     products.get(0).get("name").asText() + " " + products.get(0).get("brand").asText());
         }
