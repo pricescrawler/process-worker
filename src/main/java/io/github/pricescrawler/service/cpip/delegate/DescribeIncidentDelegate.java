@@ -16,8 +16,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class DescribeIncidentDelegate implements JavaDelegate {
-
     public static final String DIF = "%s | ";
+
     private final ObjectMapper mapper = new ObjectMapper();
     private final String[] properties = new String[]{"name", "brand", "quantity", "description", "productUrl", "eanUpcList"};
 

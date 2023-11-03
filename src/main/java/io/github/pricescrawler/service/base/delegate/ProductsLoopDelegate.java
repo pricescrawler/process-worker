@@ -7,7 +7,6 @@ import org.camunda.spin.Spin;
 
 @Log4j2
 public class ProductsLoopDelegate implements JavaDelegate {
-
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
         int numberOfRequests = Integer.parseInt(delegateExecution.getVariable("numberOfRequests").toString());

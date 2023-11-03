@@ -22,7 +22,7 @@
         <springdoc.version>2.2.0</springdoc.version>
         <selenium-driver.version>4.14.1</selenium-driver.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <prices-crawler-content.version>0.2.0</prices-crawler-content.version>
+        <prices-crawler-content.version>0.2.1</prices-crawler-content.version>
         <de.flapdoodle.embed.mongo.spring30x.version>4.9.3</de.flapdoodle.embed.mongo.spring30x.version>
     </properties>
 

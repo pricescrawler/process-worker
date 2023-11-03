@@ -1,34 +1,29 @@
 package io.github.pricescrawler.service.cpip;
 
-import io.github.pricescrawler.content.common.dao.product.ProductDao;
+import io.github.pricescrawler.content.common.dao.product.ProductHistoryDao;
 import io.github.pricescrawler.content.common.dao.product.incident.ProductIncidentDao;
-import io.github.pricescrawler.content.repository.product.ProductDataRepository;
+import io.github.pricescrawler.content.repository.product.history.ProductHistoryRepository;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataRepository;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class ClearProductIncidentsService {
-
-    private final ProductDataRepository productDataRepository;
+    private final ProductHistoryRepository productHistoryRepository;
     private final ProductIncidentDataRepository productIncidentDataRepository;
     private final ProductIncidentDataService productIncidentDataService;
-
-    public ClearProductIncidentsService(ProductDataRepository productDataRepository, ProductIncidentDataRepository productIncidentDataRepository, ProductIncidentDataService productIncidentDataService) {
-        this.productDataRepository = productDataRepository;
-        this.productIncidentDataRepository = productIncidentDataRepository;
-        this.productIncidentDataService = productIncidentDataService;
-    }
 
     public List<ProductIncidentDao> findAllProductIncidents() {
         return productIncidentDataRepository.findAll();
     }
 
-    public Optional<ProductDao> findProduct(String key) {
-        return productDataRepository.findById(key);
+    public Optional<ProductHistoryDao> findProduct(String key) {
+        return productHistoryRepository.findById(key);
     }
 
     public Optional<ProductIncidentDao> findProductIncident(String key) {
@@ -40,7 +35,7 @@ public class ClearProductIncidentsService {
     }
 
     public boolean checkIfIncidentWarMerged(String key) {
-        var optionalProduct = productDataRepository.findById(key);
+        var optionalProduct = productHistoryRepository.findById(key);
         var optionalIncident = productIncidentDataRepository.findById(key);
 
         if (optionalProduct.isPresent() && optionalIncident.isPresent()) {

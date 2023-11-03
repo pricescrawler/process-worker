@@ -5,13 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.pricescrawler.content.common.dao.catalog.CatalogDao;
 import io.github.pricescrawler.content.common.dao.catalog.CategoryDao;
 import io.github.pricescrawler.content.common.dao.catalog.LocaleDao;
-import io.github.pricescrawler.content.common.dao.product.ProductDao;
+import io.github.pricescrawler.content.common.dao.product.ProductHistoryDao;
 import io.github.pricescrawler.content.common.dao.product.incident.ProductIncidentDao;
 import io.github.pricescrawler.content.repository.catalog.CatalogDataRepository;
 import io.github.pricescrawler.content.repository.catalog.CategoryDataRepository;
 import io.github.pricescrawler.content.repository.catalog.LocaleDataRepository;
-import io.github.pricescrawler.content.repository.product.ProductDataRepository;
+import io.github.pricescrawler.content.repository.product.history.ProductHistoryRepository;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -20,23 +21,15 @@ import java.nio.file.Paths;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class DatabaseRestoreService {
     private final LocaleDataRepository localeDataRepository;
     private final CatalogDataRepository catalogDataRepository;
     private final CategoryDataRepository categoryDataRepository;
-    private final ProductDataRepository productDataRepository;
+    private final ProductHistoryRepository productHistoryRepository;
     private final ProductIncidentDataRepository productIncidentDataRepository;
 
-
     private final ObjectMapper mapper = new ObjectMapper();
-
-    public DatabaseRestoreService(LocaleDataRepository localeDataRepository, CatalogDataRepository catalogDataRepository, CategoryDataRepository categoryDataRepository, ProductDataRepository productDataRepository, ProductIncidentDataRepository productIncidentDataRepository) {
-        this.localeDataRepository = localeDataRepository;
-        this.catalogDataRepository = catalogDataRepository;
-        this.categoryDataRepository = categoryDataRepository;
-        this.productDataRepository = productDataRepository;
-        this.productIncidentDataRepository = productIncidentDataRepository;
-    }
 
     public void localeRestore() throws IOException {
         var fileContent = parseFileToString("locales.json");
@@ -61,9 +54,9 @@ public class DatabaseRestoreService {
 
     public void productRestore() throws IOException {
         var fileContent = parseFileToString("products.json");
-        var products = mapper.readValue(fileContent, new TypeReference<List<ProductDao>>() {
+        var products = mapper.readValue(fileContent, new TypeReference<List<ProductHistoryDao>>() {
         });
-        productDataRepository.saveAll(products);
+        productHistoryRepository.saveAll(products);
     }
 
     public void productIncidentRestore() throws IOException {
