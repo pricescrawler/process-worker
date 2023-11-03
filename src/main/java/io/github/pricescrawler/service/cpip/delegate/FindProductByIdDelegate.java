@@ -7,7 +7,6 @@ import org.camunda.spin.Spin;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class FindProductByIdDelegate implements JavaDelegate {
-
     @Autowired
     private ClearProductIncidentsService clearProductIncidentsService;
 

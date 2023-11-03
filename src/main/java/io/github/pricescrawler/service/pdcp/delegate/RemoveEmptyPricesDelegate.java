@@ -1,7 +1,7 @@
 package io.github.pricescrawler.service.pdcp.delegate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.pricescrawler.content.common.dao.product.ProductDao;
+import io.github.pricescrawler.content.common.dao.product.ProductHistoryDao;
 import lombok.extern.log4j.Log4j2;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
@@ -9,11 +9,10 @@ import org.camunda.spin.Spin;
 
 @Log4j2
 public class RemoveEmptyPricesDelegate implements JavaDelegate {
-
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
         var productData = delegateExecution.getVariable("productData");
-        var productJson = new ObjectMapper().readValue(productData.toString(), ProductDao.class);
+        var productJson = new ObjectMapper().readValue(productData.toString(), ProductHistoryDao.class);
         var prices = productJson.getPrices();
         var quantity = prices.size();
 
