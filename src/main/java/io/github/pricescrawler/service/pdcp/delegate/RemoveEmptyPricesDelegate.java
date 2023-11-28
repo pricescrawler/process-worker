@@ -7,11 +7,13 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.spin.Spin;
 
+import static io.github.pricescrawler.config.ConstValues.PRODUCT_DATA;
+
 @Log4j2
 public class RemoveEmptyPricesDelegate implements JavaDelegate {
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
-        var productData = delegateExecution.getVariable("productData");
+        var productData = delegateExecution.getVariable(PRODUCT_DATA.getName());
         var productJson = new ObjectMapper().readValue(productData.toString(), ProductHistoryDao.class);
         var prices = productJson.getPrices();
         var quantity = prices.size();
@@ -24,6 +26,6 @@ public class RemoveEmptyPricesDelegate implements JavaDelegate {
         }
 
         productJson.setPrices(prices);
-        delegateExecution.setVariable("productData", Spin.JSON(productJson));
+        delegateExecution.setVariable(PRODUCT_DATA.getName(), Spin.JSON(productJson));
     }
 }

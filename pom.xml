@@ -1,10 +1,9 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.pricescrawler</groupId>
     <artifactId>prices-crawler-process-worker</artifactId>
-    <version>0.1.0</version>
+    <version>0.1.1-SNAPSHOT</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -22,7 +21,7 @@
         <springdoc.version>2.2.0</springdoc.version>
         <selenium-driver.version>4.14.1</selenium-driver.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <prices-crawler-content.version>0.2.1</prices-crawler-content.version>
+        <prices-crawler-content.version>0.3.0</prices-crawler-content.version>
         <de.flapdoodle.embed.mongo.spring30x.version>4.9.3</de.flapdoodle.embed.mongo.spring30x.version>
     </properties>
 

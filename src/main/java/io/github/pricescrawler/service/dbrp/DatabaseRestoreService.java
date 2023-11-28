@@ -10,7 +10,7 @@ import io.github.pricescrawler.content.common.dao.product.incident.ProductIncide
 import io.github.pricescrawler.content.repository.catalog.CatalogDataRepository;
 import io.github.pricescrawler.content.repository.catalog.CategoryDataRepository;
 import io.github.pricescrawler.content.repository.catalog.LocaleDataRepository;
-import io.github.pricescrawler.content.repository.product.history.ProductHistoryRepository;
+import io.github.pricescrawler.content.repository.product.history.ProductHistoryDataRepository;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class DatabaseRestoreService {
     private final LocaleDataRepository localeDataRepository;
     private final CatalogDataRepository catalogDataRepository;
     private final CategoryDataRepository categoryDataRepository;
-    private final ProductHistoryRepository productHistoryRepository;
+    private final ProductHistoryDataRepository productHistoryDataRepository;
     private final ProductIncidentDataRepository productIncidentDataRepository;
 
     private final ObjectMapper mapper = new ObjectMapper();
@@ -56,7 +56,7 @@ public class DatabaseRestoreService {
         var fileContent = parseFileToString("products.json");
         var products = mapper.readValue(fileContent, new TypeReference<List<ProductHistoryDao>>() {
         });
-        productHistoryRepository.saveAll(products);
+        productHistoryDataRepository.saveAll(products);
     }
 
     public void productIncidentRestore() throws IOException {

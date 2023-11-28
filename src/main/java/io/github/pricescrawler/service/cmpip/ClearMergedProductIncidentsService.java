@@ -1,4 +1,4 @@
-package io.github.pricescrawler.service.cmpi;
+package io.github.pricescrawler.service.cmpip;
 
 import io.github.pricescrawler.content.common.dao.product.incident.ProductIncidentDao;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataRepository;

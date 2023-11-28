@@ -2,7 +2,7 @@ package io.github.pricescrawler.service.cpip;
 
 import io.github.pricescrawler.content.common.dao.product.ProductHistoryDao;
 import io.github.pricescrawler.content.common.dao.product.incident.ProductIncidentDao;
-import io.github.pricescrawler.content.repository.product.history.ProductHistoryRepository;
+import io.github.pricescrawler.content.repository.product.history.ProductHistoryDataRepository;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataRepository;
 import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class ClearProductIncidentsService {
-    private final ProductHistoryRepository productHistoryRepository;
+    private final ProductHistoryDataRepository productHistoryDataRepository;
     private final ProductIncidentDataRepository productIncidentDataRepository;
     private final ProductIncidentDataService productIncidentDataService;
 
@@ -23,7 +23,7 @@ public class ClearProductIncidentsService {
     }
 
     public Optional<ProductHistoryDao> findProduct(String key) {
-        return productHistoryRepository.findById(key);
+        return productHistoryDataRepository.findById(key);
     }
 
     public Optional<ProductIncidentDao> findProductIncident(String key) {
@@ -35,7 +35,7 @@ public class ClearProductIncidentsService {
     }
 
     public boolean checkIfIncidentWarMerged(String key) {
-        var optionalProduct = productHistoryRepository.findById(key);
+        var optionalProduct = productHistoryDataRepository.findById(key);
         var optionalIncident = productIncidentDataRepository.findById(key);
 
         if (optionalProduct.isPresent() && optionalIncident.isPresent()) {
