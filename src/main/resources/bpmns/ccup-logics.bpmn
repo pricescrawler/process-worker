@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_19ftjui" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.16.0" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.20.0">
+  <bpmn:process id="catalog-update-cookies" name="Catalog - Update Cookies" isExecutable="true" camunda:versionTag="1.0.0" camunda:historyTimeToLive="P5D">
+    <bpmn:startEvent id="StartEvent_1" name="Start">
+      <bpmn:outgoing>Flow_0luspw1</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_02r0jw7" name="End">
+      <bpmn:incoming>Flow_03rlq0l</bpmn:incoming>
+      <bpmn:incoming>Flow_1w9ad09</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0luspw1" sourceRef="StartEvent_1" targetRef="Activity_set-common-variables" />
+    <bpmn:sequenceFlow id="Flow_1qz1tcs" sourceRef="Activity_0hbe1by" targetRef="Activity_14loxqj" />
+    <bpmn:sequenceFlow id="Flow_03rlq0l" sourceRef="Activity_14loxqj" targetRef="Event_02r0jw7" />
+    <bpmn:serviceTask id="Activity_0hbe1by" name="Request Catalog Cookies" camunda:delegateExpression="${requestCatalogCookies}">
+      <bpmn:incoming>Flow_0fcm276</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qz1tcs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_14loxqj" name="Update Catalog Cookies Data" camunda:delegateExpression="${updateCatalogCookiesData}">
+      <bpmn:incoming>Flow_1qz1tcs</bpmn:incoming>
+      <bpmn:outgoing>Flow_03rlq0l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:boundaryEvent id="Event_exception-01" attachedToRef="Activity_0hbe1by">
+      <bpmn:outgoing>Flow_1c17lj1</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1tzlo6q" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0cbz3yl" attachedToRef="Activity_14loxqj">
+      <bpmn:outgoing>Flow_16lllv2</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0m52vxl" errorRef="Error_1wbqs71" camunda:errorCodeVariable="errorCode" camunda:errorMessageVariable="errorMessage" />
+    </bpmn:boundaryEvent>
+    <bpmn:scriptTask id="Activity_error-log" name="Error Log" scriptFormat="groovy">
+      <bpmn:incoming>Flow_16lllv2</bpmn:incoming>
+      <bpmn:incoming>Flow_1c17lj1</bpmn:incoming>
+      <bpmn:outgoing>Flow_1w9ad09</bpmn:outgoing>
+      <bpmn:script>String message = ""
+if ((errorCode != null) &amp;&amp; !errorCode.isEmpty())
+{
+    message += "errorCode: " + errorCode + " "
+}
+
+if ((errorMessage != null) &amp;&amp; !errorMessage.isEmpty())
+{
+    message += "errorMessage: [" + errorMessage + "]"
+}
+
+logger.error(message)</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="Flow_16lllv2" sourceRef="Event_0cbz3yl" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_1c17lj1" sourceRef="Event_exception-01" targetRef="Activity_error-log" />
+    <bpmn:sequenceFlow id="Flow_1w9ad09" sourceRef="Activity_error-log" targetRef="Event_02r0jw7" />
+    <bpmn:task id="Activity_set-common-variables" name="Set Common Variables">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:outputParameter name="logger">
+            <camunda:script scriptFormat="groovy">import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+Logger logger = LoggerFactory.getLogger("Agent CPIP");
+
+logger</camunda:script>
+          </camunda:outputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0luspw1</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fcm276</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="Flow_0fcm276" sourceRef="Activity_set-common-variables" targetRef="Activity_0hbe1by" />
+  </bpmn:process>
+  <bpmn:error id="Error_1wbqs71" name="Exception" errorCode="java.lang.Exception" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="catalog-update-cookies">
+      <bpmndi:BPMNShape id="Event_02r0jw7_di" bpmnElement="Event_02r0jw7">
+        <dc:Bounds x="732" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="740" y="75" width="20" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dl9zmw_di" bpmnElement="Activity_0hbe1by">
+        <dc:Bounds x="390" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mudbg3_di" bpmnElement="Activity_14loxqj">
+        <dc:Bounds x="540" y="77" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1hfvrm8_di" bpmnElement="Activity_error-log">
+        <dc:Bounds x="700" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ve45sj_di" bpmnElement="Activity_set-common-variables">
+        <dc:Bounds x="240" y="77" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="99" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="158" y="142" width="25" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_01z1495_di" bpmnElement="Event_exception-01">
+        <dc:Bounds x="472" y="139" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0mqaexl" bpmnElement="Event_0cbz3yl">
+        <dc:Bounds x="622" y="139" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0luspw1_di" bpmnElement="Flow_0luspw1">
+        <di:waypoint x="188" y="117" />
+        <di:waypoint x="240" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qz1tcs_di" bpmnElement="Flow_1qz1tcs">
+        <di:waypoint x="490" y="117" />
+        <di:waypoint x="540" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03rlq0l_di" bpmnElement="Flow_03rlq0l">
+        <di:waypoint x="640" y="117" />
+        <di:waypoint x="732" y="117" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16lllv2_di" bpmnElement="Flow_16lllv2">
+        <di:waypoint x="640" y="175" />
+        <di:waypoint x="640" y="230" />
+        <di:waypoint x="700" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1c17lj1_di" bpmnElement="Flow_1c17lj1">
+        <di:waypoint x="490" y="175" />
+        <di:waypoint x="490" y="230" />
+        <di:waypoint x="700" y="230" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1w9ad09_di" bpmnElement="Flow_1w9ad09">
+        <di:waypoint x="750" y="190" />
+        <di:waypoint x="750" y="135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fcm276_di" bpmnElement="Flow_0fcm276">
+        <di:waypoint x="340" y="117" />
+        <di:waypoint x="390" y="117" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

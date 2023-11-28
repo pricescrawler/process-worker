@@ -1,6 +1,6 @@
-package io.github.pricescrawler.service.cmpi.delegate;
+package io.github.pricescrawler.service.cmpip.delegate;
 
-import io.github.pricescrawler.service.cmpi.ClearMergedProductIncidentsService;
+import io.github.pricescrawler.service.cmpip.ClearMergedProductIncidentsService;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -3,27 +3,24 @@ package io.github.pricescrawler.service.cpip.delegate;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.pricescrawler.config.ConstValues;
-import io.github.pricescrawler.content.repository.product.incident.ProductIncidentDataRepository;
 import io.github.pricescrawler.utils.JsonUtils;
 import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.delegate.JavaDelegate;
 import org.camunda.spin.Spin;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static io.github.pricescrawler.config.ConstValues.INCIDENTS_IDS;
+import static io.github.pricescrawler.config.ConstValues.PRODUCT_DATA;
+
 public class DescribeIncidentDelegate implements JavaDelegate {
     public static final String DIF = "%s | ";
 
     private final ObjectMapper mapper = new ObjectMapper();
     private final String[] properties = new String[]{"name", "brand", "quantity", "description", "productUrl", "eanUpcList"};
-
-
-    @Autowired
-    private ProductIncidentDataRepository productIncidentDataRepository;
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
@@ -32,9 +29,9 @@ public class DescribeIncidentDelegate implements JavaDelegate {
         var diffNew = new StringBuilder();
         var incidentFields = new StringBuilder();
 
-        var incidents = delegateExecution.getVariable("incidentsIds");
+        var incidents = delegateExecution.getVariable(INCIDENTS_IDS.getName());
         var activeIncident = delegateExecution.getVariable("productIncidentData");
-        var productData = delegateExecution.getVariable("productData");
+        var productData = delegateExecution.getVariable(PRODUCT_DATA.getName());
 
         var incidentJson = mapper.readTree(incidents.toString());
         var activeIncidentJson = mapper.readTree(activeIncident.toString());
@@ -61,9 +58,10 @@ public class DescribeIncidentDelegate implements JavaDelegate {
             }
         }
 
-        var isProductUrlIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("productUrl"));
-        var isEanUpcListIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("eanUpcList"));
         var isNameIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("name"));
+        var isBrandIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("brand"));
+        var isEanUpcListIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("eanUpcList"));
+        var isProductUrlIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("productUrl"));
 
         var mergeUrlIncident = System.getenv(ConstValues.IGNORE_URL_INCIDENT.getName()) != null
                 && Boolean.parseBoolean(System.getenv(ConstValues.IGNORE_URL_INCIDENT.getName()));
@@ -71,8 +69,8 @@ public class DescribeIncidentDelegate implements JavaDelegate {
         if (mergeUrlIncident &&
                 (isProductUrlIncident || isEanUpcListIncident
                         || (isNameIncident
-                        && equalWordsAndCountsIgnoringOrder(diffOld.toString(), diffNew.toString())))
-                || isNameAndBrandIncident(productJson, products)) {
+                        && equalWordsAndCountsIgnoringOrder(diffOld.toString(), diffNew.toString()))
+                        || isNameAndBrandIncident(productJson, products)) || isBrandIncident) {
             delegateExecution.setVariable("approveIncidentMerge", true);
         } else {
             delegateExecution.setVariable("approveIncidentMerge", false);

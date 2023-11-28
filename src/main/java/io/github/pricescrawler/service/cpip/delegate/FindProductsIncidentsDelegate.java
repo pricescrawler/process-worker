@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Comparator;
 
+import static io.github.pricescrawler.config.ConstValues.INCIDENTS_IDS;
+
 public class FindProductsIncidentsDelegate implements JavaDelegate {
     @Autowired
     private ClearProductIncidentsService clearProductIncidentsService;
@@ -22,6 +24,6 @@ public class FindProductsIncidentsDelegate implements JavaDelegate {
         var incidentsIds = incidents.stream().sorted(comparator.reversed()).map(ProductIncidentDao::getId).toList();
         var json = JsonUtils.convertObjectToString(incidents);
         delegateExecution.setVariable("incidents", Spin.JSON(json));
-        delegateExecution.setVariable("incidentsIds", Spin.JSON(incidentsIds));
+        delegateExecution.setVariable(INCIDENTS_IDS.getName(), Spin.JSON(incidentsIds));
     }
 }
