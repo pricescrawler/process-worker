@@ -25,7 +25,7 @@ public class ScheduledService {
         runtimeService.startProcessInstanceByKey("clear-products-incidents-process-automated");
     }
 
-    @Scheduled(cron = "${prices.crawler.process-worker.service.cron.catalog-cookies-update:* * * * * *}")
+    @Scheduled(cron = "${prices.crawler.process-worker.service.cron.catalog-cookies-update:0 0 0 * * *}")
     public void startBackgroundService_catalogCookiesUpdate() {
         log.info("Starting Background Service - Catalog Cookies Update");
 
