@@ -19,7 +19,7 @@
         <camunda.version>7.20.0</camunda.version>
         <postgres.version>42.7.1</postgres.version>
         <springdoc.version>2.2.0</springdoc.version>
-        <selenium-driver.version>4.15.0</selenium-driver.version>
+        <selenium-driver.version>4.16.1</selenium-driver.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <prices-crawler-content.version>0.3.1</prices-crawler-content.version>
         <de.flapdoodle.embed.mongo.spring30x.version>4.11.0</de.flapdoodle.embed.mongo.spring30x.version>
