@@ -17,7 +17,7 @@
         <spring.version>3.1.4</spring.version>
         <groovy.version>4.0.16</groovy.version>
         <camunda.version>7.20.0</camunda.version>
-        <postgres.version>42.7.0</postgres.version>
+        <postgres.version>42.7.1</postgres.version>
         <springdoc.version>2.2.0</springdoc.version>
         <selenium-driver.version>4.15.0</selenium-driver.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
