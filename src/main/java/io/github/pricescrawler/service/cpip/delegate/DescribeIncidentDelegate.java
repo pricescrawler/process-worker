@@ -18,9 +18,10 @@ import static io.github.pricescrawler.config.ConstValues.PRODUCT_DATA;
 
 public class DescribeIncidentDelegate implements JavaDelegate {
     public static final String DIF = "%s | ";
+    public static final String BRAND = "brand";
 
     private final ObjectMapper mapper = new ObjectMapper();
-    private final String[] properties = new String[]{"name", "brand", "quantity", "description", "productUrl", "eanUpcList"};
+    private final String[] properties = new String[]{"name", BRAND, "quantity", "description", "productUrl", "eanUpcList"};
 
     @Override
     public void execute(DelegateExecution delegateExecution) throws Exception {
@@ -58,10 +59,11 @@ public class DescribeIncidentDelegate implements JavaDelegate {
             }
         }
 
+        var isBrandIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase(BRAND));
         var isNameIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("name"));
-        var isBrandIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("brand"));
         var isEanUpcListIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("eanUpcList"));
         var isProductUrlIncident = incidentProperty.stream().allMatch(value -> value.equalsIgnoreCase("productUrl"));
+        var containsNameIncident = incidentProperty.stream().anyMatch(value -> value.equalsIgnoreCase("name"));
 
         var mergeUrlIncident = System.getenv(ConstValues.IGNORE_URL_INCIDENT.getName()) != null
                 && Boolean.parseBoolean(System.getenv(ConstValues.IGNORE_URL_INCIDENT.getName()));
@@ -70,7 +72,7 @@ public class DescribeIncidentDelegate implements JavaDelegate {
                 (isProductUrlIncident || isEanUpcListIncident
                         || (isNameIncident
                         && equalWordsAndCountsIgnoringOrder(diffOld.toString(), diffNew.toString()))
-                        || isNameAndBrandIncident(productJson, products)) || isBrandIncident) {
+                        || isNameAndBrandIncident(productJson, products)) || isBrandIncident || !containsNameIncident) {
             delegateExecution.setVariable("approveIncidentMerge", true);
         } else {
             delegateExecution.setVariable("approveIncidentMerge", false);
@@ -86,7 +88,7 @@ public class DescribeIncidentDelegate implements JavaDelegate {
     private boolean isNameAndBrandIncident(JsonNode productJson, JsonNode products) {
         if (products.isArray() && !products.isEmpty()) {
             return equalWordsAndCountsIgnoringOrder(productJson.get("name").asText(),
-                    products.get(0).get("name").asText() + " " + products.get(0).get("brand").asText());
+                    products.get(0).get("name").asText() + " " + products.get(0).get(BRAND).asText());
         }
 
         return false;

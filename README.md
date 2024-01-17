@@ -10,8 +10,8 @@ The main goal of this project is to automate prices crawler tasks with camunda w
 
 | # | name    | Value   |
 |---|---------|---------|
-| 1 | `Java`  | `17`    |
-| 2 | `Maven` | `3.8.6` |
+| 1 | `Java`  | `21`    |
+| 2 | `Maven` | `3.9.6` |
 
 ## 🕹️ Getting Started
 
