@@ -18,7 +18,7 @@
         <groovy.version>4.0.20</groovy.version>
         <camunda.version>7.20.0</camunda.version>
         <postgres.version>42.7.3</postgres.version>
-        <springdoc.version>2.4.0</springdoc.version>
+        <springdoc.version>2.5.0</springdoc.version>
         <selenium-driver.version>4.19.1</selenium-driver.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <prices-crawler-content.version>0.4.1</prices-crawler-content.version>
