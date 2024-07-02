@@ -15,7 +15,7 @@
     <properties>
         <java.version>21</java.version>
         <spring.version>3.1.4</spring.version>
-        <groovy.version>4.0.21</groovy.version>
+        <groovy.version>4.0.22</groovy.version>
         <camunda.version>7.21.0</camunda.version>
         <postgres.version>42.7.3</postgres.version>
         <springdoc.version>2.5.0</springdoc.version>
